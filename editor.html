@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEK Page Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0F0F13;
+    --panel:   #16161E;
+    --border:  #2A2A38;
+    --gold:    #C9A84C;
+    --gold2:   #E8C96A;
+    --text:    #E8E4F0;
+    --muted:   #888;
+    --green:   #2ECC71;
+    --red:     #E74C3C;
+    --blue:    #3498DB;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ─────────────────────────────── */
+  .topbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  .topbar-brand {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .topbar-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  /* Page tabs */
+  .page-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .page-tab {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .page-tab:hover { color: var(--text); border-color: var(--border); }
+
+  .page-tab.active {
+    background: rgba(201,168,76,0.1);
+    border-color: rgba(201,168,76,0.3);
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 7px 16px;
+    border-radius: 4px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+
+  .btn-gold {
+    background: var(--gold);
+    color: #0F0F13;
+    font-weight: 600;
+  }
+
+  .btn-gold:hover { background: var(--gold2); }
+
+  .btn-green {
+    background: var(--green);
+    color: #0F0F13;
+    font-weight: 600;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status-dot.editing { background: var(--gold); }
+  .status-dot.saved   { background: var(--green); }
+
+  .status-label { font-size: 12px; color: var(--muted); }
+
+  /* ── TOOLBAR ─────────────────────────────── */
+  .toolbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-group {
+    display: flex;
+    gap: 2px;
+    padding: 0 6px 0 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .toolbar-group:last-child { border-right: none; padding-right: 0; }
+
+  .tool-btn {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .tool-btn:hover { background: var(--border); color: var(--text); }
+  .tool-btn.active { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.3); color: var(--gold); }
+
+  .tool-btn b { font-weight: 700; }
+  .tool-btn i { font-style: italic; }
+
+  .tool-select {
+    height: 30px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 0 8px;
+    cursor: pointer;
+  }
+
+  .toolbar-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  /* ── MAIN LAYOUT ──────────────────────────── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  .sidebar {
+    width: 220px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 16px 8px;
+  }
+
+  .sidebar-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+  }
+
+  .sidebar-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+  .sidebar-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+  /* ── IFRAME PREVIEW ──────────────────────── */
+  .preview-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .preview-toolbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .viewport-btns { display: flex; gap: 4px; }
+
+  .vp-btn {
+    padding: 3px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .vp-btn:hover { color: var(--text); border-color: var(--border); }
+  .vp-btn.active { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.08); }
+
+  .preview-url {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+    font-family: monospace;
+  }
+
+  .iframe-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
+    background: #1A1A24;
+    padding: 0;
+    transition: all 0.3s;
+  }
+
+  .iframe-container.mobile { padding: 20px; align-items: flex-start; }
+
+  #preview-frame {
+    border: none;
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: all 0.3s;
+    background: white;
+  }
+
+  .iframe-container.mobile #preview-frame {
+    width: 390px;
+    height: 844px;
+    border-radius: 16px;
+    box-shadow: 0 0 0 8px #2A2A38, 0 24px 80px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+
+  /* ── RIGHT PANEL ─────────────────────────── */
+  .right-panel {
+    width: 300px;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .right-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .right-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .right-tab:hover { color: var(--text); }
+  .right-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .right-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .prop-group { margin-bottom: 20px; }
+
+  .prop-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .prop-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+
+  .prop-input:focus { outline: none; border-color: var(--gold); }
+
+  .prop-textarea {
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  /* Quick replace fields */
+  .replace-field { margin-bottom: 16px; }
+
+  .replace-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .replace-row { display: flex; gap: 6px; }
+
+  .replace-row .prop-input { flex: 1; }
+
+  .replace-btn {
+    padding: 8px 12px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    color: var(--gold);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .replace-btn:hover { background: rgba(201,168,76,0.25); }
+
+  /* ── MODAL ───────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 780px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
+
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover { color: var(--text); border-color: var(--text); }
+
+  .modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    gap: 12px;
+  }
+
+  .modal-instructions {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+  }
+
+  .modal-instructions strong { color: var(--gold); }
+
+  .code-area {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: #A8E6CF;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 12px;
+    resize: none;
+    min-height: 300px;
+    line-height: 1.5;
+  }
+
+  .code-area:focus { outline: none; border-color: var(--gold); }
+
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* ── TOAST ───────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 2000;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: rgba(46,204,113,0.4); color: var(--green); }
+  .toast.info    { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+
+  /* ── EDIT HIGHLIGHT (injected into iframe pages) ── */
+  .bek-editable-hint {
+    font-size: 11px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    position: absolute;
+    top: -22px;
+    left: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TOP BAR -->
+<div class="topbar">
+  <span class="topbar-brand">BEK · Page Editor</span>
+  <div class="topbar-sep"></div>
+  <div class="page-tabs">
+    <button class="page-tab active" onclick="loadPage('index.html', this)">Builder</button>
+    <button class="page-tab" onclick="loadPage('iwasready.html', this)">Starseed</button>
+    <button class="page-tab" onclick="loadPage('rebuild.html', this)">Regen Biz</button>
+  </div>
+  <div class="topbar-right">
+    <div class="status-dot" id="status-dot"></div>
+    <span class="status-label" id="status-label">Ready</span>
+    <div class="topbar-sep"></div>
+    <button class="btn btn-ghost" onclick="openCodeModal()">⟨/⟩ &nbsp;View HTML</button>
+    <button class="btn btn-gold" onclick="copyHTML()">⎘ &nbsp;Copy HTML</button>
+  </div>
+</div>
+
+<!-- ═══════════════ TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-group">
+    <button class="tool-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+    <button class="tool-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+    <button class="tool-btn" onclick="fmt('underline')" title="Underline" style="text-decoration:underline">U</button>
+    <button class="tool-btn" onclick="fmt('strikeThrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+  </div>
+  <div class="toolbar-group">
+    <select class="tool-select" onchange="fmt('formatBlock', this.value); this.value=''">
+      <option value="">Heading</option>
+      <option value="h1">H1</option>
+      <option value="h2">H2</option>
+      <option value="h3">H3</option>
+      <option value="p">Paragraph</option>
+    </select>
+  </div>
+  <div class="toolbar-group">
+    <button class="tool-btn" onclick="fmt('justifyLeft')"   title="Align left">≡</button>
+    <button class="tool-btn" onclick="fmt('justifyCenter')" title="Center">≡</button>
+    <button class="tool-btn" onclick="fmt('justifyRight')"  title="Align right">≡</button>
+  </div>
+  <div class="toolbar-group">
+    <button class="tool-btn" onclick="insertLink()" title="Insert link">🔗</button>
+    <button class="tool-btn" onclick="fmt('removeFormat')" title="Clear formatting">✕</button>
+  </div>
+  <div class="toolbar-group">
+    <button class="tool-btn" onclick="undoEdit()" title="Undo">↩</button>
+    <button class="tool-btn" onclick="redoEdit()" title="Redo">↪</button>
+  </div>
+  <span class="toolbar-hint">Click any text on the page to edit it directly</span>
+</div>
+
+<!-- ═══════════════ MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sections</div>
+      <div class="sidebar-item active" onclick="scrollTo('hero')">Hero &amp; CTA</div>
+      <div class="sidebar-item" onclick="scrollTo('patterns')">Collapse Patterns</div>
+      <div class="sidebar-item" onclick="scrollTo('gets')">What You Get</div>
+      <div class="sidebar-item" onclick="scrollTo('offer')">Offer Stack</div>
+      <div class="sidebar-item" onclick="scrollTo('author')">Author</div>
+      <div class="sidebar-item" onclick="scrollTo('testimonials')">Testimonials</div>
+      <div class="sidebar-item" onclick="scrollTo('final')">Final CTA</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Quick Edits</div>
+      <div class="sidebar-item" onclick="showRightTab('replace')">🔗 Gumroad Link</div>
+      <div class="sidebar-item" onclick="showRightTab('replace')">📅 PWYW Date</div>
+      <div class="sidebar-item" onclick="showRightTab('replace')">📧 Email Address</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Tools</div>
+      <div class="sidebar-item" onclick="openCodeModal()">View Full HTML</div>
+      <div class="sidebar-item" onclick="copyHTML()">Copy HTML</div>
+      <div class="sidebar-item" onclick="showGitHubInstructions()">GitHub Save Guide</div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-wrap">
+    <div class="preview-toolbar">
+      <span style="font-size:11px;color:var(--muted)">Preview</span>
+      <div class="viewport-btns">
+        <button class="vp-btn active" onclick="setViewport('desktop', this)">Desktop</button>
+        <button class="vp-btn" onclick="setViewport('mobile', this)">Mobile</button>
+      </div>
+      <span class="preview-url" id="preview-url">index.html</span>
+    </div>
+    <div class="iframe-container" id="iframe-container">
+      <iframe id="preview-frame" src="index.html"></iframe>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="right-tabs">
+      <div class="right-tab active" onclick="showRightTab('replace')" id="tab-replace">Quick Replace</div>
+      <div class="right-tab" onclick="showRightTab('element')" id="tab-element">Selected</div>
+      <div class="right-tab" onclick="showRightTab('help')" id="tab-help">Help</div>
+    </div>
+
+    <div class="right-content" id="panel-replace">
+      <div class="prop-group">
+        <div class="prop-label">Global Replace — All Pages</div>
+
+        <div class="replace-field">
+          <label class="replace-label">Gumroad URL</label>
+          <div class="replace-row">
+            <input class="prop-input" id="r-gumroad" placeholder="https://your-link.gumroad.com/l/..." type="url">
+            <button class="replace-btn" onclick="doReplace('YOUR_GUMROAD_LINK', 'r-gumroad')">Apply</button>
+          </div>
+        </div>
+
+        <div class="replace-field">
+          <label class="replace-label">PWYW Close Date</label>
+          <div class="replace-row">
+            <input class="prop-input" id="r-date" placeholder="March 18, 2026" type="text">
+            <button class="replace-btn" onclick="doReplace('______', 'r-date')">Apply</button>
+          </div>
+        </div>
+
+        <div class="replace-field">
+          <label class="replace-label">Email Address</label>
+          <div class="replace-row">
+            <input class="prop-input" id="r-email" placeholder="you@yourdomain.com" type="email">
+            <button class="replace-btn" onclick="doReplace('YOUR@EMAIL.com', 'r-email')">Apply</button>
+          </div>
+        </div>
+
+        <div class="replace-field">
+          <label class="replace-label">Author Name</label>
+          <div class="replace-row">
+            <input class="prop-input" id="r-author" placeholder="Omja Brhad" type="text">
+            <button class="replace-btn" onclick="doReplace('Omja Brhad', 'r-author')">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-group">
+        <div class="prop-label">Current Page</div>
+        <div id="current-page-info" style="font-size:12px;color:var(--muted);line-height:1.6">
+          Load a page and click any text block to edit it inline.<br><br>
+          Use Quick Replace above to update links and dates across the whole page at once.
+        </div>
+      </div>
+    </div>
+
+    <div class="right-content" id="panel-element" style="display:none">
+      <div class="prop-group">
+        <div class="prop-label">Selected Element</div>
+        <div id="element-tag" style="font-size:12px;color:var(--gold);margin-bottom:12px;font-family:monospace"></div>
+        <textarea class="prop-input prop-textarea" id="element-text" placeholder="Click any text on the page to select it and edit here..." oninput="syncFromPanel()"></textarea>
+      </div>
+      <div class="prop-group">
+        <div class="prop-label">HTML</div>
+        <textarea class="prop-input prop-textarea" id="element-html" placeholder="Raw HTML of selected element..." oninput="syncHTMLFromPanel()" style="min-height:120px;font-family:monospace;font-size:11px"></textarea>
+      </div>
+    </div>
+
+    <div class="right-content" id="panel-help" style="display:none">
+      <div class="prop-group">
+        <div class="prop-label">How to Edit</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">
+          <p style="margin-bottom:12px">1. <strong style="color:var(--text)">Click any text</strong> on the preview to edit it inline.</p>
+          <p style="margin-bottom:12px">2. Use the <strong style="color:var(--text)">toolbar</strong> to bold, italicize, or change headings.</p>
+          <p style="margin-bottom:12px">3. Use <strong style="color:var(--text)">Quick Replace</strong> to update links and dates globally.</p>
+          <p style="margin-bottom:12px">4. Click <strong style="color:var(--gold)">Copy HTML</strong> when done.</p>
+          <p>5. Paste into your GitHub file to save.</p>
+        </div>
+      </div>
+      <div class="prop-group">
+        <div class="prop-label">Save to GitHub</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">
+          <p style="margin-bottom:8px">1. Copy the HTML from this editor</p>
+          <p style="margin-bottom:8px">2. Go to github.com → your bek-portal repo</p>
+          <p style="margin-bottom:8px">3. Click the file you edited (e.g. index.html)</p>
+          <p style="margin-bottom:8px">4. Click the ✏️ pencil icon to edit</p>
+          <p style="margin-bottom:8px">5. Select all (Ctrl+A) and paste</p>
+          <p style="margin-bottom:8px">6. Click "Commit changes"</p>
+          <p>7. Wait ~60 seconds for GitHub Pages to rebuild</p>
+        </div>
+      </div>
+      <div class="prop-group">
+        <div class="prop-label">Keyboard Shortcuts</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2;font-family:monospace">
+          Ctrl+B &nbsp;&nbsp; Bold<br>
+          Ctrl+I &nbsp;&nbsp; Italic<br>
+          Ctrl+Z &nbsp;&nbsp; Undo<br>
+          Ctrl+Y &nbsp;&nbsp; Redo<br>
+          Ctrl+C &nbsp;&nbsp; Copy (normal)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CODE MODAL -->
+<div class="modal-overlay" id="code-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Page HTML — index.html</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-instructions">
+        <strong>To save your changes:</strong> Copy this HTML → Go to your GitHub repo → Click the file → Click ✏️ edit → Select all → Paste → Commit changes. GitHub Pages rebuilds in ~60 seconds.
+      </div>
+      <textarea class="code-area" id="code-area" readonly></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      <button class="btn btn-green" onclick="copyFromModal()">⎘ &nbsp;Copy HTML to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+let currentFile = 'index.html';
+let currentDoc  = null;
+let selectedEl  = null;
+let isDirty     = false;
+
+// Store editable HTML per file so switching tabs preserves edits
+const pageCache = {
+  'index.html': null,
+  'iwasready.html': null,
+  'rebuild.html': null
+};
+
+const iframe = document.getElementById('preview-frame');
+
+// ── LOAD PAGE ─────────────────────────────────────────
+function loadPage(file, tabEl) {
+  // Save current page HTML before switching
+  if (currentDoc && currentFile) {
+    pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+  }
+
+  // Update tabs
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+
+  currentFile = file;
+  document.getElementById('preview-url').textContent = file;
+  document.getElementById('modal-title').textContent = 'Page HTML — ' + file;
+
+  // If we have a cached edited version, load from blob
+  if (pageCache[file]) {
+    loadFromCache(file);
+  } else {
+    iframe.src = file;
+    iframe.onload = () => initEditableFrame();
+  }
+  setStatus('ready');
+  selectedEl = null;
+  clearElementPanel();
+}
+
+function loadFromCache(file) {
+  const blob = new Blob([pageCache[file]], {type: 'text/html'});
+  const url  = URL.createObjectURL(blob);
+  iframe.src = url;
+  iframe.onload = () => { URL.revokeObjectURL(url); initEditableFrame(); };
+}
+
+function initEditableFrame() {
+  currentDoc = iframe.contentDocument || iframe.contentWindow.document;
+  if (!currentDoc) return;
+
+  const win = iframe.contentWindow;
+
+  // Make all text-containing elements editable
+  const editableSelectors = [
+    'h1','h2','h3','h4','h5','h6',
+    'p','.hero-eyebrow','.hero-sub','.section-eyebrow',
+    '.pattern-feel','.pattern-name','.pattern-chapters',
+    '.phase-desc','.phase-title','.phase-label','.phase-chapters',
+    '.get-title','.get-desc','.get-icon',
+    '.app-title','.app-desc','.app-label',
+    '.testimonial-text','.testimonial-name','.testimonial-role',
+    '.body-copy','.pain-feel','.pain-name','.pain-chapters',
+    '.offer-list li','.recog-line p',
+    '.cta-primary','.cta-meta','.urgency-bar p',
+    '.author-img-wrap','.topbar-brand',
+    'footer p', '.status-label'
+  ];
+
+  editableSelectors.forEach(sel => {
+    currentDoc.querySelectorAll(sel).forEach(el => {
+      if (el.children.length === 0 || sel === '.body-copy' || sel === '.offer-list li' || sel === '.recog-line p' || sel === '.urgency-bar p') {
+        el.setAttribute('contenteditable', 'true');
+        el.setAttribute('data-bek-editable', 'true');
+        el.style.outline = 'none';
+        el.style.cursor  = 'text';
+
+        el.addEventListener('focus', () => {
+          el.style.outline = '2px solid rgba(201,168,76,0.5)';
+          el.style.outlineOffset = '2px';
+          el.style.borderRadius = '2px';
+          selectedEl = el;
+          updateElementPanel(el);
+          setStatus('editing');
+          showRightTab('element');
+        });
+
+        el.addEventListener('blur', () => {
+          el.style.outline = 'none';
+          isDirty = true;
+          setStatus('editing');
+          // Sync cache
+          pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+        });
+
+        el.addEventListener('input', () => {
+          isDirty = true;
+          if (document.getElementById('panel-element').style.display !== 'none') {
+            updateElementPanel(el);
+          }
+        });
+      }
+    });
+  });
+
+  // Prevent link navigation inside iframe
+  currentDoc.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+
+  // Prevent form submissions
+  currentDoc.querySelectorAll('form').forEach(f => {
+    f.addEventListener('submit', e => e.preventDefault());
+  });
+
+  // Inject editing styles
+  const style = currentDoc.createElement('style');
+  style.textContent = `
+    [data-bek-editable]:hover {
+      outline: 1px dashed rgba(201,168,76,0.3) !important;
+      outline-offset: 2px;
+    }
+    [data-bek-editable]:focus {
+      outline: 2px solid rgba(201,168,76,0.6) !important;
+    }
+  `;
+  currentDoc.head.appendChild(style);
+
+  document.getElementById('current-page-info').innerHTML =
+    `<span style="color:var(--gold)">${currentFile}</span> loaded.<br><br>Click any text on the page to edit it inline.`;
+}
+
+// ── FORMAT COMMANDS ───────────────────────────────────
+function fmt(cmd, val) {
+  if (!currentDoc) return;
+  currentDoc.execCommand(cmd, false, val || null);
+  iframe.contentWindow.focus();
+  isDirty = true;
+  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+}
+
+function undoEdit() { fmt('undo'); }
+function redoEdit() { fmt('redo'); }
+
+function insertLink() {
+  const url = prompt('Enter URL:');
+  if (url) fmt('createLink', url);
+}
+
+// ── GLOBAL REPLACE ────────────────────────────────────
+function doReplace(placeholder, inputId) {
+  const val = document.getElementById(inputId).value.trim();
+  if (!val) { showToast('Enter a value first', 'info'); return; }
+  if (!currentDoc) { showToast('Load a page first', 'info'); return; }
+
+  // Replace in the live DOM
+  replaceInDOM(currentDoc.body, placeholder, val);
+
+  // Also replace in cached HTML
+  if (pageCache[currentFile]) {
+    pageCache[currentFile] = pageCache[currentFile].split(placeholder).join(val);
+  } else {
+    pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+  }
+
+  isDirty = true;
+  setStatus('editing');
+  showToast(`Replaced "${placeholder}" ✓`, 'success');
+}
+
+function replaceInDOM(node, find, replace) {
+  if (node.nodeType === 3) {
+    // Text node
+    if (node.textContent.includes(find)) {
+      node.textContent = node.textContent.split(find).join(replace);
+    }
+  } else if (node.nodeType === 1) {
+    // Element — replace in attributes too (href)
+    if (node.getAttribute && node.getAttribute('href') && node.getAttribute('href').includes(find)) {
+      node.setAttribute('href', node.getAttribute('href').split(find).join(replace));
+    }
+    node.childNodes.forEach(child => replaceInDOM(child, find, replace));
+  }
+}
+
+// ── ELEMENT PANEL ──────────────────────────────────────
+function updateElementPanel(el) {
+  document.getElementById('element-tag').textContent = '<' + el.tagName.toLowerCase() + '>';
+  document.getElementById('element-text').value = el.innerText;
+  document.getElementById('element-html').value = el.innerHTML;
+}
+
+function clearElementPanel() {
+  document.getElementById('element-tag').textContent = '';
+  document.getElementById('element-text').value = '';
+  document.getElementById('element-html').value = '';
+}
+
+function syncFromPanel() {
+  if (!selectedEl) return;
+  const txt = document.getElementById('element-text').value;
+  selectedEl.innerText = txt;
+  isDirty = true;
+  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+}
+
+function syncHTMLFromPanel() {
+  if (!selectedEl) return;
+  selectedEl.innerHTML = document.getElementById('element-html').value;
+  isDirty = true;
+  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+}
+
+// ── VIEWPORT ──────────────────────────────────────────
+function setViewport(mode, btn) {
+  document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const container = document.getElementById('iframe-container');
+  const frame     = document.getElementById('preview-frame');
+  if (mode === 'mobile') {
+    container.classList.add('mobile');
+  } else {
+    container.classList.remove('mobile');
+    frame.style.width  = '100%';
+    frame.style.height = '100%';
+  }
+}
+
+// ── SCROLL TO SECTION ─────────────────────────────────
+function scrollTo(section) {
+  if (!currentDoc) return;
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const sectionMap = {
+    hero:         ['.hero', '.hero h1'],
+    patterns:     ['.patterns-section', '.pain-section', '.phases-section'],
+    gets:         ['.gets-grid', '.section-wrap'],
+    offer:        ['.offer-section'],
+    author:       ['.author-section', '.two-col'],
+    testimonials: ['.testimonial-section'],
+    final:        ['.final-cta']
+  };
+
+  const selectors = sectionMap[section] || [];
+  let found = false;
+  for (const sel of selectors) {
+    const el = currentDoc.querySelector(sel);
+    if (el) { el.scrollIntoView({behavior:'smooth'}); found = true; break; }
+  }
+  if (!found) iframe.contentWindow.scrollTo({top: 0, behavior:'smooth'});
+}
+
+// ── RIGHT PANEL TABS ──────────────────────────────────
+function showRightTab(tab) {
+  ['replace','element','help'].forEach(t => {
+    document.getElementById('panel-' + t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+// ── HTML MODAL ────────────────────────────────────────
+function openCodeModal() {
+  const html = getCurrentHTML();
+  document.getElementById('code-area').value = html;
+  document.getElementById('code-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('code-modal').classList.remove('open');
+}
+
+function copyFromModal() {
+  const area = document.getElementById('code-area');
+  area.select();
+  document.execCommand('copy');
+  showToast('HTML copied to clipboard ✓', 'success');
+}
+
+// ── COPY HTML ─────────────────────────────────────────
+function copyHTML() {
+  const html = getCurrentHTML();
+  navigator.clipboard.writeText(html).then(() => {
+    showToast('HTML copied! Now paste into GitHub ✓', 'success');
+    setStatus('saved');
+    setTimeout(() => setStatus('ready'), 3000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = html;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('HTML copied! Now paste into GitHub ✓', 'success');
+  });
+}
+
+function getCurrentHTML() {
+  if (pageCache[currentFile]) return pageCache[currentFile];
+  if (currentDoc) return '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+  return '';
+}
+
+// ── GITHUB INSTRUCTIONS ───────────────────────────────
+function showGitHubInstructions() {
+  showRightTab('help');
+}
+
+// ── STATUS ────────────────────────────────────────────
+function setStatus(state) {
+  const dot   = document.getElementById('status-dot');
+  const label = document.getElementById('status-label');
+  dot.className = 'status-dot';
+  if (state === 'editing') {
+    dot.classList.add('editing');
+    label.textContent = 'Unsaved changes';
+  } else if (state === 'saved') {
+    dot.classList.add('saved');
+    label.textContent = 'Copied ✓';
+  } else {
+    label.textContent = 'Ready';
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────
+iframe.onload = () => initEditableFrame();
+
+// Close modal on overlay click
+document.getElementById('code-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Keyboard shortcut: Escape closes modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
