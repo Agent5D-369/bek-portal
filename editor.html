@@ -3,1129 +3,802 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BEK Page Editor</title>
+<title>BEK Editor v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:      #0F0F13;
-    --panel:   #16161E;
-    --border:  #2A2A38;
-    --gold:    #C9A84C;
-    --gold2:   #E8C96A;
-    --text:    #E8E4F0;
-    --muted:   #888;
-    --green:   #2ECC71;
-    --red:     #E74C3C;
-    --blue:    #3498DB;
-  }
-
-  * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* ── TOP BAR ─────────────────────────────── */
-  .topbar {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-    z-index: 100;
-  }
-
-  .topbar-brand {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-  }
-
-  .topbar-sep {
-    width: 1px;
-    height: 24px;
-    background: var(--border);
-  }
-
-  /* Page tabs */
-  .page-tabs {
-    display: flex;
-    gap: 4px;
-  }
-
-  .page-tab {
-    padding: 6px 14px;
-    border-radius: 4px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .page-tab:hover { color: var(--text); border-color: var(--border); }
-
-  .page-tab.active {
-    background: rgba(201,168,76,0.1);
-    border-color: rgba(201,168,76,0.3);
-    color: var(--gold);
-    font-weight: 500;
-  }
-
-  .topbar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .btn {
-    padding: 7px 16px;
-    border-radius: 4px;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
-
-  .btn-gold {
-    background: var(--gold);
-    color: #0F0F13;
-    font-weight: 600;
-  }
-
-  .btn-gold:hover { background: var(--gold2); }
-
-  .btn-green {
-    background: var(--green);
-    color: #0F0F13;
-    font-weight: 600;
-  }
-
-  .status-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-  }
-
-  .status-dot.editing { background: var(--gold); }
-  .status-dot.saved   { background: var(--green); }
-
-  .status-label { font-size: 12px; color: var(--muted); }
-
-  /* ── TOOLBAR ─────────────────────────────── */
-  .toolbar {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 20px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-  }
-
-  .toolbar-group {
-    display: flex;
-    gap: 2px;
-    padding: 0 6px 0 0;
-    border-right: 1px solid var(--border);
-  }
-
-  .toolbar-group:last-child { border-right: none; padding-right: 0; }
-
-  .tool-btn {
-    width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s;
-  }
-
-  .tool-btn:hover { background: var(--border); color: var(--text); }
-  .tool-btn.active { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.3); color: var(--gold); }
-
-  .tool-btn b { font-weight: 700; }
-  .tool-btn i { font-style: italic; }
-
-  .tool-select {
-    height: 30px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 0 8px;
-    cursor: pointer;
-  }
-
-  .toolbar-hint {
-    font-size: 12px;
-    color: var(--muted);
-    margin-left: auto;
-    font-style: italic;
-  }
-
-  /* ── MAIN LAYOUT ──────────────────────────── */
-  .main {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  /* ── SIDEBAR ─────────────────────────────── */
-  .sidebar {
-    width: 220px;
-    background: var(--panel);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow-y: auto;
-  }
-
-  .sidebar-section {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sidebar-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0 16px 8px;
-  }
-
-  .sidebar-item {
-    padding: 8px 16px;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    border-left: 2px solid transparent;
-    line-height: 1.4;
-  }
-
-  .sidebar-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
-  .sidebar-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
-
-  /* ── IFRAME PREVIEW ──────────────────────── */
-  .preview-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .preview-toolbar {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 6px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--muted);
-    flex-shrink: 0;
-  }
-
-  .viewport-btns { display: flex; gap: 4px; }
-
-  .vp-btn {
-    padding: 3px 10px;
-    border-radius: 3px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    font-size: 11px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .vp-btn:hover { color: var(--text); border-color: var(--border); }
-  .vp-btn.active { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.08); }
-
-  .preview-url {
-    font-size: 11px;
-    color: var(--muted);
-    margin-left: auto;
-    font-family: monospace;
-  }
-
-  .iframe-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    overflow: auto;
-    background: #1A1A24;
-    padding: 0;
-    transition: all 0.3s;
-  }
-
-  .iframe-container.mobile { padding: 20px; align-items: flex-start; }
-
-  #preview-frame {
-    border: none;
-    width: 100%;
-    height: 100%;
-    display: block;
-    transition: all 0.3s;
-    background: white;
-  }
-
-  .iframe-container.mobile #preview-frame {
-    width: 390px;
-    height: 844px;
-    border-radius: 16px;
-    box-shadow: 0 0 0 8px #2A2A38, 0 24px 80px rgba(0,0,0,0.6);
-    flex-shrink: 0;
-  }
-
-  /* ── RIGHT PANEL ─────────────────────────── */
-  .right-panel {
-    width: 300px;
-    background: var(--panel);
-    border-left: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .right-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .right-tab {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .right-tab:hover { color: var(--text); }
-  .right-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-  .right-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
-
-  .prop-group { margin-bottom: 20px; }
-
-  .prop-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .prop-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 8px 10px;
-    resize: vertical;
-    transition: border-color 0.2s;
-  }
-
-  .prop-input:focus { outline: none; border-color: var(--gold); }
-
-  .prop-textarea {
-    min-height: 80px;
-    line-height: 1.6;
-  }
-
-  /* Quick replace fields */
-  .replace-field { margin-bottom: 16px; }
-
-  .replace-label {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .replace-row { display: flex; gap: 6px; }
-
-  .replace-row .prop-input { flex: 1; }
-
-  .replace-btn {
-    padding: 8px 12px;
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 4px;
-    color: var(--gold);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-
-  .replace-btn:hover { background: rgba(201,168,76,0.25); }
-
-  /* ── MODAL ───────────────────────────────── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    width: 100%;
-    max-width: 780px;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .modal-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
-
-  .modal-close {
-    width: 28px; height: 28px;
-    border-radius: 4px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .modal-close:hover { color: var(--text); border-color: var(--text); }
-
-  .modal-body {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding: 16px 20px;
-    gap: 12px;
-  }
-
-  .modal-instructions {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    padding: 10px 14px;
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 4px;
-  }
-
-  .modal-instructions strong { color: var(--gold); }
-
-  .code-area {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: #A8E6CF;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    padding: 12px;
-    resize: none;
-    min-height: 300px;
-    line-height: 1.5;
-  }
-
-  .code-area:focus { outline: none; border-color: var(--gold); }
-
-  .modal-footer {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-
-  /* ── TOAST ───────────────────────────────── */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 20px;
-    font-size: 13px;
-    color: var(--text);
-    z-index: 2000;
-    transition: transform 0.3s ease;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    white-space: nowrap;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: rgba(46,204,113,0.4); color: var(--green); }
-  .toast.info    { border-color: rgba(201,168,76,0.4); color: var(--gold); }
-
-  /* ── EDIT HIGHLIGHT (injected into iframe pages) ── */
-  .bek-editable-hint {
-    font-size: 11px;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    padding: 2px 6px;
-    border-radius: 3px;
-    position: absolute;
-    top: -22px;
-    left: 0;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 999;
-  }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+:root {
+  --bg:#0C0C10; --panel:#13131A; --panel2:#1A1A24; --border:#252535; --border2:#2E2E42;
+  --gold:#C9A84C; --gold2:#E8C96A; --golddim:rgba(201,168,76,.14);
+  --text:#E4E0F0; --muted:#7070A0; --muted2:#50507A;
+  --green:#2ECC71; --red:#E74C3C; --blue:#5B8DEF;
+  --r:5px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{height:48px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:200}
+.brand{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.08em;white-space:nowrap;padding-right:10px;border-right:1px solid var(--border)}
+.ptabs{display:flex;gap:3px}
+.ptab{padding:5px 13px;border-radius:var(--r);border:1px solid transparent;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap}
+.ptab:hover{color:var(--text);border-color:var(--border2)}
+.ptab.active{background:var(--golddim);border-color:rgba(201,168,76,.35);color:var(--gold)}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sep{width:1px;height:22px;background:var(--border)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--muted2);flex-shrink:0;transition:all .3s}
+.sdot.dirty{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.sdot.saved{background:var(--green)}
+.stxt{font-size:11px;color:var(--muted)}
+.btn{padding:6px 14px;border-radius:var(--r);border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text)}
+.btn-gold{background:var(--gold);color:#0C0C10}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
+.btn-green{background:var(--green);color:#0C0C10}
+.btn-green:hover{filter:brightness(1.1)}
+
+/* FORMAT BAR */
+.fbar{height:38px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:4px;flex-shrink:0;overflow-x:auto}
+.fg{display:flex;gap:1px;padding:0 6px 0 0;border-right:1px solid var(--border)}
+.fg:last-child{border-right:none;padding:0}
+.fb{width:28px;height:26px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
+.fb:hover{background:var(--border);color:var(--text)}
+.fb svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.fsel{height:26px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:11px;padding:0 6px;cursor:pointer}
+.cswatch{width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0}
+.cswatch input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer}
+.csbg{position:absolute;inset:0;border-radius:3px;pointer-events:none}
+.fbhint{font-size:11px;color:var(--muted2);margin-left:auto;white-space:nowrap;font-style:italic}
+
+/* WORKSPACE */
+.ws{display:flex;flex:1;overflow:hidden}
+
+/* LEFT SIDEBAR */
+.ls{width:200px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.lstabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.lstab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.lstab:hover{color:var(--text)}
+.lstab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.lscontent{flex:1;overflow-y:auto;padding:8px 0}
+.lslbl{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);padding:10px 14px 5px}
+.lsitem{padding:7px 14px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent;display:flex;align-items:center;gap:7px;line-height:1.3}
+.lsitem:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.lsitem.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,.05)}
+.lsicon{font-size:14px;flex-shrink:0}
+
+/* BLOCK PALETTE */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px}
+.bchip{background:var(--panel2);border:1px solid var(--border2);border-radius:var(--r);padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:11px;color:var(--muted);line-height:1.4}
+.bchip:hover{border-color:var(--gold);color:var(--gold);background:var(--golddim);transform:translateY(-1px)}
+.bchip-ic{font-size:20px;display:block;margin-bottom:5px}
+
+/* PREVIEW */
+.parea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.pbar{height:36px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+.vpbtns{display:flex;gap:3px}
+.vpbtn{padding:3px 10px;border-radius:4px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;font-weight:500}
+.vpbtn:hover{color:var(--text);border-color:var(--border2)}
+.vpbtn.active{color:var(--gold);border-color:rgba(201,168,76,.3);background:var(--golddim)}
+.purlbar{flex:1;height:22px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0 10px;font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+.iwrap{flex:1;display:flex;justify-content:center;align-items:flex-start;background:#111118;overflow:auto;transition:all .3s;position:relative}
+.iwrap.mob{padding:20px}
+#pframe{border:none;width:100%;height:100%;display:block;background:#fff;transition:all .3s}
+.iwrap.mob #pframe{width:390px;height:844px;flex-shrink:0;border-radius:18px;box-shadow:0 0 0 8px #2A2A3E,0 28px 80px rgba(0,0,0,.7)}
+
+/* SELECTION OVERLAY */
+.selov{position:fixed;pointer-events:none;z-index:9999;border:2px solid var(--gold);border-radius:3px;display:none;transition:all .08s}
+.selov.on{display:block}
+.sellbl{position:absolute;top:-22px;left:0;background:var(--gold);color:#0C0C10;font-size:10px;font-weight:700;font-family:'DM Sans',sans-serif;padding:2px 7px;border-radius:3px 3px 0 0;white-space:nowrap;letter-spacing:.05em}
+.selacts{position:absolute;top:-22px;right:0;display:flex;gap:2px}
+.sact{width:22px;height:22px;background:var(--panel);border:1px solid var(--border2);border-radius:3px;color:var(--muted);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .15s;pointer-events:all}
+.sact:hover{color:var(--text);border-color:var(--text)}
+.sact.del:hover{color:var(--red);border-color:var(--red)}
+
+/* RIGHT PANEL */
+.rp{width:280px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.rptabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.rptab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.rptab:hover{color:var(--text)}
+.rptab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.rpcontent{flex:1;overflow-y:auto;padding:14px}
+.pb{margin-bottom:18px}
+.pl{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:7px 9px;transition:border-color .2s;resize:vertical}
+.pi:focus{outline:none;border-color:var(--gold)}
+.pta{min-height:72px;line-height:1.6}
+.pcode{font-family:'DM Mono',monospace;font-size:11px;min-height:90px}
+.prow{display:flex;gap:7px;align-items:center}
+.prow .pi{flex:1}
+.apbtn{padding:7px 13px;border-radius:var(--r);background:var(--golddim);border:1px solid rgba(201,168,76,.35);color:var(--gold);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;white-space:nowrap}
+.apbtn:hover{background:rgba(201,168,76,.25)}
+.fabtn{width:100%;padding:8px;border-radius:var(--r);background:var(--golddim);border:1px solid rgba(201,168,76,.35);color:var(--gold);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:6px}
+.fabtn:hover{background:rgba(201,168,76,.25)}
+.phint{font-size:11px;color:var(--muted2);line-height:1.6;margin-top:4px}
+
+/* image drop */
+.idrop{border:2px dashed var(--border2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:all .2s;color:var(--muted)}
+.idrop:hover{border-color:var(--gold);color:var(--gold)}
+.idrop input{display:none}
+.idrop-ic{font-size:22px;margin-bottom:5px;display:block}
+.idrop p{font-size:11px;line-height:1.6}
+.iprev{width:100%;border-radius:var(--r);border:1px solid var(--border);margin-top:8px;display:none;max-height:110px;object-fit:cover}
+
+/* color dots */
+.cdots{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.cdot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.cdot:hover{transform:scale(1.15)}
+.cdot.on{border-color:#fff}
+
+/* help */
+.hstep{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.hnum{width:20px;height:20px;border-radius:50%;background:var(--golddim);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.htxt{font-size:12px;color:var(--muted);line-height:1.6}
+.htxt strong{color:var(--text)}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);border-radius:8px;width:100%;max-width:800px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.modalhd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modaltitle{font-size:14px;font-weight:600}
+.modalx{width:26px;height:26px;border-radius:4px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modalx:hover{color:var(--text);border-color:var(--text)}
+.modalbody{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:14px 18px;gap:10px}
+.ibox{padding:10px 13px;font-size:12px;color:var(--muted);line-height:1.7;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.15);border-radius:var(--r)}
+.ibox strong{color:var(--gold)}
+.codeta{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:#A8E6CF;font-family:'DM Mono',monospace;font-size:11px;padding:12px;resize:none;min-height:280px;line-height:1.5}
+.codeta:focus{outline:none;border-color:var(--gold)}
+.modalft{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:10px 18px;font-size:12px;font-weight:500;color:var(--text);z-index:2000;transition:transform .28s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(46,204,113,.4);color:var(--green)}
+.toast.info{border-color:rgba(201,168,76,.4);color:var(--gold)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ TOP BAR -->
+<!-- TOPBAR -->
 <div class="topbar">
-  <span class="topbar-brand">BEK · Page Editor</span>
-  <div class="topbar-sep"></div>
-  <div class="page-tabs">
-    <button class="page-tab active" onclick="loadPage('index.html', this)">Builder</button>
-    <button class="page-tab" onclick="loadPage('iwasready.html', this)">Starseed</button>
-    <button class="page-tab" onclick="loadPage('rebuild.html', this)">Regen Biz</button>
+  <span class="brand">BEK EDITOR</span>
+  <div class="ptabs">
+    <button class="ptab active" data-file="index.html"     onclick="switchPage(this)">⚡ Builder</button>
+    <button class="ptab"        data-file="iwasready.html" onclick="switchPage(this)">✦ Starseed</button>
+    <button class="ptab"        data-file="rebuild.html"   onclick="switchPage(this)">🌱 Regen Biz</button>
   </div>
-  <div class="topbar-right">
-    <div class="status-dot" id="status-dot"></div>
-    <span class="status-label" id="status-label">Ready</span>
-    <div class="topbar-sep"></div>
-    <button class="btn btn-ghost" onclick="openCodeModal()">⟨/⟩ &nbsp;View HTML</button>
-    <button class="btn btn-gold" onclick="copyHTML()">⎘ &nbsp;Copy HTML</button>
+  <div class="tbr">
+    <div class="sdot" id="sdot"></div>
+    <span class="stxt" id="stxt">Ready</span>
+    <div class="sep"></div>
+    <button class="btn btn-ghost" onclick="openModal()">⟨/⟩ HTML</button>
+    <button class="btn btn-gold"  onclick="copyHTML()">⎘ Copy &amp; Save</button>
   </div>
 </div>
 
-<!-- ═══════════════ TOOLBAR -->
-<div class="toolbar">
-  <div class="toolbar-group">
-    <button class="tool-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
-    <button class="tool-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
-    <button class="tool-btn" onclick="fmt('underline')" title="Underline" style="text-decoration:underline">U</button>
-    <button class="tool-btn" onclick="fmt('strikeThrough')" title="Strikethrough" style="text-decoration:line-through">S</button>
+<!-- FORMAT BAR -->
+<div class="fbar">
+  <div class="fg">
+    <button class="fb" onclick="ex('bold')"          title="Bold"><b>B</b></button>
+    <button class="fb" onclick="ex('italic')"        title="Italic"><i>I</i></button>
+    <button class="fb" onclick="ex('underline')"     title="Underline" style="text-decoration:underline">U</button>
+    <button class="fb" onclick="ex('strikeThrough')" title="Strike" style="text-decoration:line-through">S</button>
   </div>
-  <div class="toolbar-group">
-    <select class="tool-select" onchange="fmt('formatBlock', this.value); this.value=''">
-      <option value="">Heading</option>
-      <option value="h1">H1</option>
-      <option value="h2">H2</option>
-      <option value="h3">H3</option>
-      <option value="p">Paragraph</option>
+  <div class="fg">
+    <select class="fsel" onchange="ex('formatBlock',this.value);this.value=''">
+      <option value="">Block</option>
+      <option value="h1">H1</option><option value="h2">H2</option>
+      <option value="h3">H3</option><option value="p">P</option>
+    </select>
+    <select class="fsel" onchange="ex('fontSize',this.value);this.value=''">
+      <option value="">Size</option>
+      <option value="1">XS</option><option value="2">S</option><option value="3">M</option>
+      <option value="4">L</option><option value="5">XL</option><option value="6">2X</option><option value="7">3X</option>
     </select>
   </div>
-  <div class="toolbar-group">
-    <button class="tool-btn" onclick="fmt('justifyLeft')"   title="Align left">≡</button>
-    <button class="tool-btn" onclick="fmt('justifyCenter')" title="Center">≡</button>
-    <button class="tool-btn" onclick="fmt('justifyRight')"  title="Align right">≡</button>
+  <div class="fg">
+    <button class="fb" onclick="ex('justifyLeft')"   title="Left"><svg viewBox="0 0 16 16"><line x1="1" y1="4" x2="15" y2="4"/><line x1="1" y1="8" x2="10" y2="8"/><line x1="1" y1="12" x2="13" y2="12"/></svg></button>
+    <button class="fb" onclick="ex('justifyCenter')" title="Center"><svg viewBox="0 0 16 16"><line x1="1" y1="4" x2="15" y2="4"/><line x1="3" y1="8" x2="13" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg></button>
+    <button class="fb" onclick="ex('justifyRight')"  title="Right"><svg viewBox="0 0 16 16"><line x1="1" y1="4" x2="15" y2="4"/><line x1="6" y1="8" x2="15" y2="8"/><line x1="3" y1="12" x2="15" y2="12"/></svg></button>
   </div>
-  <div class="toolbar-group">
-    <button class="tool-btn" onclick="insertLink()" title="Insert link">🔗</button>
-    <button class="tool-btn" onclick="fmt('removeFormat')" title="Clear formatting">✕</button>
+  <div class="fg">
+    <div class="cswatch" title="Text color">
+      <div class="csbg" id="tcbg" style="background:#E4E0F0"></div>
+      <input type="color" value="#E4E0F0" oninput="applyColor('foreColor',this.value);document.getElementById('tcbg').style.background=this.value">
+    </div>
+    <div class="cswatch" title="Background highlight">
+      <div class="csbg" id="hcbg" style="background:#C9A84C;opacity:.5"></div>
+      <input type="color" value="#C9A84C" oninput="applyColor('hiliteColor',this.value);document.getElementById('hcbg').style.background=this.value">
+    </div>
   </div>
-  <div class="toolbar-group">
-    <button class="tool-btn" onclick="undoEdit()" title="Undo">↩</button>
-    <button class="tool-btn" onclick="redoEdit()" title="Redo">↪</button>
+  <div class="fg">
+    <button class="fb" onclick="doLink()" title="Link"><svg viewBox="0 0 16 16"><path d="M6 10l-2 2a3 3 0 004 0l4-4a3 3 0 00-4-4l-1 1"/><path d="M10 6l2-2a3 3 0 00-4 0L4 8a3 3 0 004 4l1-1"/></svg></button>
+    <button class="fb" onclick="ex('removeFormat')" title="Clear"><svg viewBox="0 0 16 16"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button>
+    <button class="fb" onclick="ex('undo')" title="Undo"><svg viewBox="0 0 16 16"><path d="M3 8a5 5 0 105 5"/><polyline points="1,5 3,8 6,6"/></svg></button>
+    <button class="fb" onclick="ex('redo')" title="Redo"><svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 10-5 5"/><polyline points="15,5 13,8 10,6"/></svg></button>
   </div>
-  <span class="toolbar-hint">Click any text on the page to edit it directly</span>
+  <span class="fbhint">Click any text to edit · Toolbar formats selection · + Blocks adds new content</span>
 </div>
 
-<!-- ═══════════════ MAIN -->
-<div class="main">
+<!-- WORKSPACE -->
+<div class="ws">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Sections</div>
-      <div class="sidebar-item active" onclick="scrollTo('hero')">Hero &amp; CTA</div>
-      <div class="sidebar-item" onclick="scrollTo('patterns')">Collapse Patterns</div>
-      <div class="sidebar-item" onclick="scrollTo('gets')">What You Get</div>
-      <div class="sidebar-item" onclick="scrollTo('offer')">Offer Stack</div>
-      <div class="sidebar-item" onclick="scrollTo('author')">Author</div>
-      <div class="sidebar-item" onclick="scrollTo('testimonials')">Testimonials</div>
-      <div class="sidebar-item" onclick="scrollTo('final')">Final CTA</div>
+  <!-- LEFT SIDEBAR -->
+  <div class="ls">
+    <div class="lstabs">
+      <div class="lstab active" onclick="lsTab('nav',this)">Sections</div>
+      <div class="lstab"        onclick="lsTab('blocks',this)">+ Blocks</div>
+      <div class="lstab"        onclick="lsTab('replace',this)">Replace</div>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Quick Edits</div>
-      <div class="sidebar-item" onclick="showRightTab('replace')">🔗 Gumroad Link</div>
-      <div class="sidebar-item" onclick="showRightTab('replace')">📅 PWYW Date</div>
-      <div class="sidebar-item" onclick="showRightTab('replace')">📧 Email Address</div>
+
+    <!-- NAV -->
+    <div class="lscontent" id="ls-nav">
+      <div class="lslbl">Jump To</div>
+      <div class="lsitem active" onclick="navTo('hero',this)"><span class="lsicon">⬆</span>Hero &amp; CTA</div>
+      <div class="lsitem" onclick="navTo('patterns',this)"><span class="lsicon">🔴</span>Patterns</div>
+      <div class="lsitem" onclick="navTo('phases',this)"><span class="lsicon">🌀</span>Phases</div>
+      <div class="lsitem" onclick="navTo('gets',this)"><span class="lsicon">📦</span>What You Get</div>
+      <div class="lsitem" onclick="navTo('appendix',this)"><span class="lsicon">📎</span>Appendices</div>
+      <div class="lsitem" onclick="navTo('offer',this)"><span class="lsicon">✅</span>Offer Stack</div>
+      <div class="lsitem" onclick="navTo('author',this)"><span class="lsicon">👤</span>Author</div>
+      <div class="lsitem" onclick="navTo('testimonials',this)"><span class="lsicon">💬</span>Testimonials</div>
+      <div class="lsitem" onclick="navTo('final',this)"><span class="lsicon">⚡</span>Final CTA</div>
+      <div class="lsitem" onclick="navTo('footer',this)"><span class="lsicon">—</span>Footer</div>
+      <div class="lslbl" style="margin-top:8px">Tools</div>
+      <div class="lsitem" onclick="openModal()"><span class="lsicon">⟨/⟩</span>View HTML</div>
+      <div class="lsitem" onclick="copyHTML()"><span class="lsicon">⎘</span>Copy HTML</div>
+      <div class="lsitem" onclick="showRp('help')"><span class="lsicon">?</span>Save Guide</div>
     </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Tools</div>
-      <div class="sidebar-item" onclick="openCodeModal()">View Full HTML</div>
-      <div class="sidebar-item" onclick="copyHTML()">Copy HTML</div>
-      <div class="sidebar-item" onclick="showGitHubInstructions()">GitHub Save Guide</div>
+
+    <!-- BLOCKS -->
+    <div class="lscontent" id="ls-blocks" style="display:none">
+      <div class="lslbl">Insert after selection</div>
+      <div class="bgrid">
+        <div class="bchip" onclick="insertBlock('heading')"><span class="bchip-ic">H</span>Heading</div>
+        <div class="bchip" onclick="insertBlock('paragraph')"><span class="bchip-ic">¶</span>Paragraph</div>
+        <div class="bchip" onclick="insertBlock('cta')"><span class="bchip-ic">⚡</span>CTA Button</div>
+        <div class="bchip" onclick="insertBlock('urgency')"><span class="bchip-ic">🔥</span>Urgency Bar</div>
+        <div class="bchip" onclick="insertBlock('testimonial')"><span class="bchip-ic">💬</span>Testimonial</div>
+        <div class="bchip" onclick="insertBlock('image')"><span class="bchip-ic">🖼</span>Image</div>
+        <div class="bchip" onclick="insertBlock('card')"><span class="bchip-ic">🃏</span>Card</div>
+        <div class="bchip" onclick="insertBlock('checklist')"><span class="bchip-ic">✅</span>Checklist</div>
+        <div class="bchip" onclick="insertBlock('eyebrow')"><span class="bchip-ic">✦</span>Eyebrow</div>
+        <div class="bchip" onclick="insertBlock('quote')"><span class="bchip-ic">"</span>Pull Quote</div>
+        <div class="bchip" onclick="insertBlock('divider')"><span class="bchip-ic">—</span>Divider</div>
+        <div class="bchip" onclick="insertBlock('spacer')"><span class="bchip-ic">↕</span>Spacer</div>
+      </div>
+    </div>
+
+    <!-- REPLACE -->
+    <div class="lscontent" id="ls-replace" style="display:none;padding:10px">
+      <div class="pb">
+        <div class="pl">Gumroad URL</div>
+        <input class="pi" id="r-gum" type="url" placeholder="https://...gumroad.com/l/...">
+        <button class="fabtn" onclick="gReplace('YOUR_GUMROAD_LINK','r-gum')">Apply to Page</button>
+      </div>
+      <div class="pb">
+        <div class="pl">PWYW Close Date</div>
+        <input class="pi" id="r-date" type="text" placeholder="March 18, 2026">
+        <button class="fabtn" onclick="gReplace('______','r-date')">Apply to Page</button>
+      </div>
+      <div class="pb">
+        <div class="pl">Email Address</div>
+        <input class="pi" id="r-email" type="email" placeholder="you@domain.com">
+        <button class="fabtn" onclick="gReplace('YOUR@EMAIL.com','r-email')">Apply to Page</button>
+      </div>
+      <div class="pb">
+        <div class="pl">Min Price (adds $)</div>
+        <input class="pi" id="r-minp" type="text" placeholder="17">
+        <button class="fabtn" onclick="gReplace('$17','r-minp','$')">Apply to Page</button>
+      </div>
+      <div class="pb">
+        <div class="pl">Suggested Price (adds $)</div>
+        <input class="pi" id="r-sugp" type="text" placeholder="27">
+        <button class="fabtn" onclick="gReplace('$27','r-sugp','$')">Apply to Page</button>
+      </div>
+      <div class="pb">
+        <div class="pl">Lock Price (adds $)</div>
+        <input class="pi" id="r-lockp" type="text" placeholder="47">
+        <button class="fabtn" onclick="gReplace('$47','r-lockp','$')">Apply to Page</button>
+      </div>
     </div>
   </div>
 
   <!-- PREVIEW -->
-  <div class="preview-wrap">
-    <div class="preview-toolbar">
-      <span style="font-size:11px;color:var(--muted)">Preview</span>
-      <div class="viewport-btns">
-        <button class="vp-btn active" onclick="setViewport('desktop', this)">Desktop</button>
-        <button class="vp-btn" onclick="setViewport('mobile', this)">Mobile</button>
+  <div class="parea">
+    <div class="pbar">
+      <div class="vpbtns">
+        <button class="vpbtn active" onclick="setVP('desktop',this)">Desktop</button>
+        <button class="vpbtn"        onclick="setVP('mobile',this)">Mobile</button>
       </div>
-      <span class="preview-url" id="preview-url">index.html</span>
+      <div class="purlbar" id="purlbar">index.html</div>
     </div>
-    <div class="iframe-container" id="iframe-container">
-      <iframe id="preview-frame" src="index.html"></iframe>
+    <div class="iwrap" id="iwrap">
+      <!-- selection overlay lives outside iframe so it can cover it -->
+      <div class="selov" id="selov">
+        <span class="sellbl" id="sellbl">el</span>
+        <div class="selacts">
+          <button class="sact" onclick="moveEl(-1)" title="Move up">↑</button>
+          <button class="sact" onclick="moveEl(1)"  title="Move down">↓</button>
+          <button class="sact" onclick="dupEl()"    title="Duplicate">⎘</button>
+          <button class="sact del" onclick="delEl()" title="Delete">✕</button>
+        </div>
+      </div>
+      <iframe id="pframe" src="index.html"></iframe>
     </div>
   </div>
 
   <!-- RIGHT PANEL -->
-  <div class="right-panel">
-    <div class="right-tabs">
-      <div class="right-tab active" onclick="showRightTab('replace')" id="tab-replace">Quick Replace</div>
-      <div class="right-tab" onclick="showRightTab('element')" id="tab-element">Selected</div>
-      <div class="right-tab" onclick="showRightTab('help')" id="tab-help">Help</div>
+  <div class="rp">
+    <div class="rptabs">
+      <div class="rptab active" id="rpt-element" onclick="showRp('element')">Element</div>
+      <div class="rptab"        id="rpt-image"   onclick="showRp('image')">Image</div>
+      <div class="rptab"        id="rpt-help"    onclick="showRp('help')">Help</div>
     </div>
 
-    <div class="right-content" id="panel-replace">
-      <div class="prop-group">
-        <div class="prop-label">Global Replace — All Pages</div>
-
-        <div class="replace-field">
-          <label class="replace-label">Gumroad URL</label>
-          <div class="replace-row">
-            <input class="prop-input" id="r-gumroad" placeholder="https://your-link.gumroad.com/l/..." type="url">
-            <button class="replace-btn" onclick="doReplace('YOUR_GUMROAD_LINK', 'r-gumroad')">Apply</button>
-          </div>
-        </div>
-
-        <div class="replace-field">
-          <label class="replace-label">PWYW Close Date</label>
-          <div class="replace-row">
-            <input class="prop-input" id="r-date" placeholder="March 18, 2026" type="text">
-            <button class="replace-btn" onclick="doReplace('______', 'r-date')">Apply</button>
-          </div>
-        </div>
-
-        <div class="replace-field">
-          <label class="replace-label">Email Address</label>
-          <div class="replace-row">
-            <input class="prop-input" id="r-email" placeholder="you@yourdomain.com" type="email">
-            <button class="replace-btn" onclick="doReplace('YOUR@EMAIL.com', 'r-email')">Apply</button>
-          </div>
-        </div>
-
-        <div class="replace-field">
-          <label class="replace-label">Author Name</label>
-          <div class="replace-row">
-            <input class="prop-input" id="r-author" placeholder="Omja Brhad" type="text">
-            <button class="replace-btn" onclick="doReplace('Omja Brhad', 'r-author')">Apply</button>
-          </div>
-        </div>
+    <!-- ELEMENT -->
+    <div class="rpcontent" id="rp-element">
+      <div class="pb">
+        <div class="pl" id="eltag">No element selected</div>
+        <p class="phint">Click any text on the preview to select and edit it.</p>
       </div>
-
-      <div class="prop-group">
-        <div class="prop-label">Current Page</div>
-        <div id="current-page-info" style="font-size:12px;color:var(--muted);line-height:1.6">
-          Load a page and click any text block to edit it inline.<br><br>
-          Use Quick Replace above to update links and dates across the whole page at once.
+      <div id="eledit" style="display:none">
+        <div class="pb">
+          <div class="pl">Text</div>
+          <textarea class="pi pta" id="el-text" oninput="syncText()"></textarea>
+        </div>
+        <div class="pb">
+          <div class="pl">Inner HTML</div>
+          <textarea class="pi pcode" id="el-html" oninput="syncHTML()"></textarea>
+        </div>
+        <div class="pb">
+          <div class="pl">Background</div>
+          <div class="cdots" id="cdots"></div>
+          <div class="prow" style="margin-top:8px">
+            <input class="pi" id="el-bg" type="text" placeholder="#1A1726 or rgba(...)">
+            <button class="apbtn" onclick="applyBg()">Set</button>
+          </div>
+        </div>
+        <div class="pb">
+          <div class="pl">Padding</div>
+          <div class="prow">
+            <input class="pi" id="el-pad" type="text" placeholder="40px 32px">
+            <button class="apbtn" onclick="applyPad()">Set</button>
+          </div>
+        </div>
+        <div class="pb">
+          <div class="pl">Custom Style</div>
+          <textarea class="pi pcode" id="el-css" placeholder="font-size:18px;" oninput="applyCSS()"></textarea>
         </div>
       </div>
     </div>
 
-    <div class="right-content" id="panel-element" style="display:none">
-      <div class="prop-group">
-        <div class="prop-label">Selected Element</div>
-        <div id="element-tag" style="font-size:12px;color:var(--gold);margin-bottom:12px;font-family:monospace"></div>
-        <textarea class="prop-input prop-textarea" id="element-text" placeholder="Click any text on the page to select it and edit here..." oninput="syncFromPanel()"></textarea>
+    <!-- IMAGE -->
+    <div class="rpcontent" id="rp-image" style="display:none">
+      <div class="pb">
+        <div class="pl">Upload Image</div>
+        <div class="idrop" onclick="document.getElementById('imgfile').click()">
+          <input type="file" id="imgfile" accept="image/*" onchange="handleFile(this)">
+          <span class="idrop-ic">📁</span>
+          <p>Click to upload<br><span style="color:var(--muted2)">PNG · JPG · WEBP · GIF</span></p>
+        </div>
+        <img class="iprev" id="iprev" src="" alt="">
       </div>
-      <div class="prop-group">
-        <div class="prop-label">HTML</div>
-        <textarea class="prop-input prop-textarea" id="element-html" placeholder="Raw HTML of selected element..." oninput="syncHTMLFromPanel()" style="min-height:120px;font-family:monospace;font-size:11px"></textarea>
+      <div class="pb">
+        <div class="pl">Or paste URL</div>
+        <div class="prow">
+          <input class="pi" id="img-url" type="url" placeholder="https://...">
+          <button class="apbtn" onclick="applyImgURL()">Set</button>
+        </div>
+        <p class="phint">Click an image on the page first, then set its source here.</p>
+      </div>
+      <div class="pb">
+        <div class="pl">Insert New Image Block</div>
+        <input class="pi" id="ins-url" type="url" placeholder="https://..." style="margin-bottom:6px">
+        <input class="pi" id="ins-alt" type="text" placeholder="Alt text / caption">
+        <select class="pi" id="ins-style" style="margin-top:6px">
+          <option value="full">Full width</option>
+          <option value="center">Centered (780px)</option>
+          <option value="circle">Circle / Avatar</option>
+        </select>
+        <button class="fabtn" onclick="insertImgBlock()">Insert at current position</button>
       </div>
     </div>
 
-    <div class="right-content" id="panel-help" style="display:none">
-      <div class="prop-group">
-        <div class="prop-label">How to Edit</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.8">
-          <p style="margin-bottom:12px">1. <strong style="color:var(--text)">Click any text</strong> on the preview to edit it inline.</p>
-          <p style="margin-bottom:12px">2. Use the <strong style="color:var(--text)">toolbar</strong> to bold, italicize, or change headings.</p>
-          <p style="margin-bottom:12px">3. Use <strong style="color:var(--text)">Quick Replace</strong> to update links and dates globally.</p>
-          <p style="margin-bottom:12px">4. Click <strong style="color:var(--gold)">Copy HTML</strong> when done.</p>
-          <p>5. Paste into your GitHub file to save.</p>
-        </div>
+    <!-- HELP -->
+    <div class="rpcontent" id="rp-help" style="display:none">
+      <div class="pb">
+        <div class="pl">Editing</div>
+        <div class="hstep"><div class="hnum">1</div><div class="htxt"><strong>Click any text</strong> on the preview to edit inline.</div></div>
+        <div class="hstep"><div class="hnum">2</div><div class="htxt">Use the <strong>toolbar</strong> to format — bold, italic, size, color.</div></div>
+        <div class="hstep"><div class="hnum">3</div><div class="htxt"><strong>+ Blocks</strong> tab inserts styled content blocks.</div></div>
+        <div class="hstep"><div class="hnum">4</div><div class="htxt"><strong>Replace</strong> tab updates Gumroad link, date, prices globally.</div></div>
+        <div class="hstep"><div class="hnum">5</div><div class="htxt">Click <strong>⎘ Copy &amp; Save</strong> when finished.</div></div>
       </div>
-      <div class="prop-group">
-        <div class="prop-label">Save to GitHub</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.8">
-          <p style="margin-bottom:8px">1. Copy the HTML from this editor</p>
-          <p style="margin-bottom:8px">2. Go to github.com → your bek-portal repo</p>
-          <p style="margin-bottom:8px">3. Click the file you edited (e.g. index.html)</p>
-          <p style="margin-bottom:8px">4. Click the ✏️ pencil icon to edit</p>
-          <p style="margin-bottom:8px">5. Select all (Ctrl+A) and paste</p>
-          <p style="margin-bottom:8px">6. Click "Commit changes"</p>
-          <p>7. Wait ~60 seconds for GitHub Pages to rebuild</p>
-        </div>
+      <div class="pb">
+        <div class="pl">Save to GitHub</div>
+        <div class="hstep"><div class="hnum">1</div><div class="htxt">Click <strong>⎘ Copy &amp; Save</strong> — HTML is in clipboard.</div></div>
+        <div class="hstep"><div class="hnum">2</div><div class="htxt">Go to <strong>github.com</strong> → bek-portal repo.</div></div>
+        <div class="hstep"><div class="hnum">3</div><div class="htxt">Click the file → click <strong>✏️ pencil</strong> icon.</div></div>
+        <div class="hstep"><div class="hnum">4</div><div class="htxt"><strong>Ctrl+A</strong> to select all, then <strong>Ctrl+V</strong> to paste.</div></div>
+        <div class="hstep"><div class="hnum">5</div><div class="htxt">Click <strong>Commit changes</strong> — live in ~60 seconds.</div></div>
       </div>
-      <div class="prop-group">
-        <div class="prop-label">Keyboard Shortcuts</div>
-        <div style="font-size:12px;color:var(--muted);line-height:2;font-family:monospace">
-          Ctrl+B &nbsp;&nbsp; Bold<br>
-          Ctrl+I &nbsp;&nbsp; Italic<br>
-          Ctrl+Z &nbsp;&nbsp; Undo<br>
-          Ctrl+Y &nbsp;&nbsp; Redo<br>
-          Ctrl+C &nbsp;&nbsp; Copy (normal)
+      <div class="pb">
+        <div class="pl">Shortcuts</div>
+        <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:2.2">
+          Ctrl+B &nbsp; Bold<br>Ctrl+I &nbsp; Italic<br>Ctrl+Z &nbsp; Undo<br>Ctrl+Y &nbsp; Redo<br>Esc &nbsp;&nbsp;&nbsp; Close modal
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ CODE MODAL -->
-<div class="modal-overlay" id="code-modal">
+<!-- HTML MODAL -->
+<div class="overlay" id="codemodal">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="modal-title">Page HTML — index.html</span>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modalhd">
+      <span class="modaltitle" id="modaltitle">HTML — index.html</span>
+      <button class="modalx" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="modal-instructions">
-        <strong>To save your changes:</strong> Copy this HTML → Go to your GitHub repo → Click the file → Click ✏️ edit → Select all → Paste → Commit changes. GitHub Pages rebuilds in ~60 seconds.
-      </div>
-      <textarea class="code-area" id="code-area" readonly></textarea>
+    <div class="modalbody">
+      <div class="ibox"><strong>To save:</strong> Copy HTML → GitHub repo → click file → ✏️ edit → Ctrl+A → paste → Commit. Rebuilds in ~60s.</div>
+      <textarea class="codeta" id="codeta" readonly></textarea>
     </div>
-    <div class="modal-footer">
+    <div class="modalft">
       <button class="btn btn-ghost" onclick="closeModal()">Close</button>
-      <button class="btn btn-green" onclick="copyFromModal()">⎘ &nbsp;Copy HTML to Clipboard</button>
+      <button class="btn btn-green" onclick="copyFromModal()">⎘ Copy to Clipboard</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────
-let currentFile = 'index.html';
-let currentDoc  = null;
-let selectedEl  = null;
-let isDirty     = false;
+// ── STATE ──────────────────────────────────────
+let file = 'index.html', doc = null, win = null, sel = null, dirty = false;
+const cache = {'index.html':null,'iwasready.html':null,'rebuild.html':null};
+const fr = document.getElementById('pframe');
+const ov = document.getElementById('selov');
+const lb = document.getElementById('sellbl');
 
-// Store editable HTML per file so switching tabs preserves edits
-const pageCache = {
-  'index.html': null,
-  'iwasready.html': null,
-  'rebuild.html': null
+// BG presets
+const BGS = ['#0D0B14','#13111E','#1A1726','#0B0D1F','#10122A',
+             '#0A110D','#0E1610','#1A2B1C','#C9A84C','#8B1A1A',
+             '#2ECC71','#3498DB','#ffffff','#111111'];
+function buildDots(){
+  const w=document.getElementById('cdots');w.innerHTML='';
+  BGS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='cdot';d.style.background=c;
+    d.style.border=c==='#ffffff'?'2px solid #555':'2px solid transparent';
+    d.title=c;
+    d.onclick=()=>{if(!sel)return;sel.style.background=c;document.getElementById('el-bg').value=c;markDirty()};
+    w.appendChild(d);
+  });
+}
+buildDots();
+
+// ── BLOCK TEMPLATES ────────────────────────────
+const BLOCKS = {
+  heading:`<h2 style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:#F5F0E8;margin:32px 0 16px;line-height:1.2" data-bek>Your Heading Here</h2>`,
+  paragraph:`<p style="font-size:17px;line-height:1.8;color:#B8B0A0;max-width:680px;margin:0 0 20px" data-bek>Your paragraph text here. Click to edit this block.</p>`,
+  cta:`<div style="text-align:center;padding:32px 0"><a href="YOUR_GUMROAD_LINK" style="display:inline-block;background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#0C0C10;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:20px 52px;border-radius:2px" data-bek>⚡  Your CTA Text Here</a><p style="margin-top:12px;font-size:13px;color:#888" data-bek>Subtext below the button</p></div>`,
+  urgency:`<div style="background:rgba(139,26,26,.3);border:1px solid rgba(192,57,43,.3);border-radius:4px;padding:20px 32px;text-align:center;max-width:680px;margin:24px auto"><p style="font-size:15px;color:#F5F0E8;line-height:1.6" data-bek><strong style="color:#E74C3C">Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p></div>`,
+  testimonial:`<div style="background:#1A1726;padding:40px 36px;border-radius:2px;position:relative;max-width:540px;margin:24px auto"><p style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:#F5F0E8;line-height:1.7;margin-bottom:20px" data-bek>"Your testimonial text goes here. Specific and pain-relief focused."</p><p style="font-size:13px;color:#C9A84C;font-weight:500" data-bek>— Name, Role · Location</p></div>`,
+  image:`<div style="text-align:center;padding:24px 0"><img src="https://placehold.co/780x440/1A1726/C9A84C?text=Your+Image" alt="Image" style="max-width:100%;border-radius:4px;border:1px solid rgba(201,168,76,.15)" data-bek><p style="font-size:12px;color:#666;margin-top:8px" data-bek>Image caption (optional — click to edit)</p></div>`,
+  card:`<div style="background:#1A1726;border:1px solid rgba(201,168,76,.1);padding:40px 32px;border-radius:2px;max-width:400px;margin:16px 0"><span style="font-size:2rem;display:block;margin-bottom:16px">🌀</span><div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#F5F0E8;margin-bottom:10px" data-bek>Card Title</div><p style="font-size:14px;color:#B8B0A0;line-height:1.7" data-bek>Card description text. Click to edit.</p></div>`,
+  checklist:`<ul style="list-style:none;margin:24px 0;display:flex;flex-direction:column;gap:14px;max-width:680px"><li style="font-size:16px;color:#F5F0E8;line-height:1.6" data-bek>✓ &nbsp;First item — click to edit</li><li style="font-size:16px;color:#F5F0E8;line-height:1.6" data-bek>✓ &nbsp;Second item</li><li style="font-size:16px;color:#F5F0E8;line-height:1.6" data-bek>✓ &nbsp;Third item</li></ul>`,
+  eyebrow:`<p style="font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#C9A84C;margin:0 0 16px" data-bek>EYEBROW TEXT HERE</p>`,
+  quote:`<blockquote style="border-left:3px solid #C9A84C;padding:20px 28px;margin:32px 0;background:rgba(201,168,76,.04);max-width:680px"><p style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-style:italic;color:#F5F0E8;line-height:1.6" data-bek>"Your pull quote here — a powerful line that deserves to stand alone."</p><cite style="font-size:13px;color:#888;display:block;margin-top:12px;font-style:normal" data-bek>— Attribution</cite></blockquote>`,
+  divider:`<div style="display:flex;align-items:center;gap:20px;padding:32px 0;max-width:680px;margin:0 auto"><div style="flex:1;height:1px;background:rgba(201,168,76,.2)"></div><span style="color:#C9A84C;font-size:14px">✦</span><div style="flex:1;height:1px;background:rgba(201,168,76,.2)"></div></div>`,
+  spacer:`<div style="height:80px"></div>`
 };
 
-const iframe = document.getElementById('preview-frame');
-
-// ── LOAD PAGE ─────────────────────────────────────────
-function loadPage(file, tabEl) {
-  // Save current page HTML before switching
-  if (currentDoc && currentFile) {
-    pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
-  }
-
-  // Update tabs
-  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-  if (tabEl) tabEl.classList.add('active');
-
-  currentFile = file;
-  document.getElementById('preview-url').textContent = file;
-  document.getElementById('modal-title').textContent = 'Page HTML — ' + file;
-
-  // If we have a cached edited version, load from blob
-  if (pageCache[file]) {
-    loadFromCache(file);
-  } else {
-    iframe.src = file;
-    iframe.onload = () => initEditableFrame();
-  }
+// ── PAGE SWITCH ────────────────────────────────
+function switchPage(tab){
+  saveCache();
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  file=tab.dataset.file;
+  document.getElementById('purlbar').textContent=file;
+  document.getElementById('modaltitle').textContent='HTML — '+file;
+  sel=null; hideOv(); resetPanel();
+  cache[file]?loadBlob(cache[file]):(fr.src=file, fr.onload=initFrame);
   setStatus('ready');
-  selectedEl = null;
-  clearElementPanel();
 }
 
-function loadFromCache(file) {
-  const blob = new Blob([pageCache[file]], {type: 'text/html'});
-  const url  = URL.createObjectURL(blob);
-  iframe.src = url;
-  iframe.onload = () => { URL.revokeObjectURL(url); initEditableFrame(); };
+function loadBlob(html){
+  const b=new Blob([html],{type:'text/html'});
+  const u=URL.createObjectURL(b);
+  fr.onload=()=>{URL.revokeObjectURL(u);initFrame()};
+  fr.src=u;
 }
 
-function initEditableFrame() {
-  currentDoc = iframe.contentDocument || iframe.contentWindow.document;
-  if (!currentDoc) return;
-
-  const win = iframe.contentWindow;
-
-  // Make all text-containing elements editable
-  const editableSelectors = [
-    'h1','h2','h3','h4','h5','h6',
-    'p','.hero-eyebrow','.hero-sub','.section-eyebrow',
-    '.pattern-feel','.pattern-name','.pattern-chapters',
-    '.phase-desc','.phase-title','.phase-label','.phase-chapters',
-    '.get-title','.get-desc','.get-icon',
-    '.app-title','.app-desc','.app-label',
-    '.testimonial-text','.testimonial-name','.testimonial-role',
-    '.body-copy','.pain-feel','.pain-name','.pain-chapters',
-    '.offer-list li','.recog-line p',
-    '.cta-primary','.cta-meta','.urgency-bar p',
-    '.author-img-wrap','.topbar-brand',
-    'footer p', '.status-label'
-  ];
-
-  editableSelectors.forEach(sel => {
-    currentDoc.querySelectorAll(sel).forEach(el => {
-      if (el.children.length === 0 || sel === '.body-copy' || sel === '.offer-list li' || sel === '.recog-line p' || sel === '.urgency-bar p') {
-        el.setAttribute('contenteditable', 'true');
-        el.setAttribute('data-bek-editable', 'true');
-        el.style.outline = 'none';
-        el.style.cursor  = 'text';
-
-        el.addEventListener('focus', () => {
-          el.style.outline = '2px solid rgba(201,168,76,0.5)';
-          el.style.outlineOffset = '2px';
-          el.style.borderRadius = '2px';
-          selectedEl = el;
-          updateElementPanel(el);
-          setStatus('editing');
-          showRightTab('element');
-        });
-
-        el.addEventListener('blur', () => {
-          el.style.outline = 'none';
-          isDirty = true;
-          setStatus('editing');
-          // Sync cache
-          pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
-        });
-
-        el.addEventListener('input', () => {
-          isDirty = true;
-          if (document.getElementById('panel-element').style.display !== 'none') {
-            updateElementPanel(el);
-          }
-        });
-      }
-    });
-  });
-
-  // Prevent link navigation inside iframe
-  currentDoc.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', e => e.preventDefault());
-  });
-
-  // Prevent form submissions
-  currentDoc.querySelectorAll('form').forEach(f => {
-    f.addEventListener('submit', e => e.preventDefault());
-  });
-
-  // Inject editing styles
-  const style = currentDoc.createElement('style');
-  style.textContent = `
-    [data-bek-editable]:hover {
-      outline: 1px dashed rgba(201,168,76,0.3) !important;
-      outline-offset: 2px;
-    }
-    [data-bek-editable]:focus {
-      outline: 2px solid rgba(201,168,76,0.6) !important;
-    }
-  `;
-  currentDoc.head.appendChild(style);
-
-  document.getElementById('current-page-info').innerHTML =
-    `<span style="color:var(--gold)">${currentFile}</span> loaded.<br><br>Click any text on the page to edit it inline.`;
+function saveCache(){
+  if(doc&&file) cache[file]='<!DOCTYPE html>'+doc.documentElement.outerHTML;
 }
 
-// ── FORMAT COMMANDS ───────────────────────────────────
-function fmt(cmd, val) {
-  if (!currentDoc) return;
-  currentDoc.execCommand(cmd, false, val || null);
-  iframe.contentWindow.focus();
-  isDirty = true;
-  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
-}
+// ── FRAME INIT ────────────────────────────────
+function initFrame(){
+  doc=fr.contentDocument||fr.contentWindow.document;
+  win=fr.contentWindow;
+  if(!doc)return;
 
-function undoEdit() { fmt('undo'); }
-function redoEdit() { fmt('redo'); }
-
-function insertLink() {
-  const url = prompt('Enter URL:');
-  if (url) fmt('createLink', url);
-}
-
-// ── GLOBAL REPLACE ────────────────────────────────────
-function doReplace(placeholder, inputId) {
-  const val = document.getElementById(inputId).value.trim();
-  if (!val) { showToast('Enter a value first', 'info'); return; }
-  if (!currentDoc) { showToast('Load a page first', 'info'); return; }
-
-  // Replace in the live DOM
-  replaceInDOM(currentDoc.body, placeholder, val);
-
-  // Also replace in cached HTML
-  if (pageCache[currentFile]) {
-    pageCache[currentFile] = pageCache[currentFile].split(placeholder).join(val);
-  } else {
-    pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+  // Inject edit styles
+  let st=doc.getElementById('_bek_styles');
+  if(!st){
+    st=doc.createElement('style');st.id='_bek_styles';
+    st.textContent=`[data-bek]:hover{outline:1px dashed rgba(201,168,76,.4)!important;cursor:text}[data-bek]:focus{outline:2px solid rgba(201,168,76,.7)!important;outline-offset:2px}`;
+    doc.head.appendChild(st);
   }
 
-  isDirty = true;
-  setStatus('editing');
-  showToast(`Replaced "${placeholder}" ✓`, 'success');
+  // Make text elements editable
+  const SELS='h1,h2,h3,h4,h5,h6,p,li,a,.hero-eyebrow,.section-eyebrow,.hero-sub,.pattern-feel,.pattern-name,.pattern-chapters,.phase-desc,.phase-title,.phase-label,.get-title,.get-desc,.get-icon,.app-title,.app-desc,.app-label,.testimonial-text,.testimonial-name,.testimonial-role,.pain-feel,.pain-name,.pain-chapters,.recog-line p,.cta-primary,.urgency-bar p,.cta-meta,.offer-list li';
+  doc.querySelectorAll(SELS).forEach(el=>{
+    if(el.closest('#_bek_styles'))return;
+    el.setAttribute('contenteditable','true');
+    el.setAttribute('data-bek','');
+    bindEl(el);
+  });
+
+  // Images — clickable, not editable
+  doc.querySelectorAll('img').forEach(img=>{
+    img.setAttribute('data-bek','');
+    img.style.cursor='pointer';
+    img.addEventListener('click',e=>{e.preventDefault();onFocus(img);showRp('image')});
+  });
+
+  // Prevent link nav
+  doc.querySelectorAll('a').forEach(a=>{
+    if(!a.hasAttribute('contenteditable'))
+      a.addEventListener('click',e=>e.preventDefault());
+  });
+
+  // Click outside to deselect
+  doc.addEventListener('click',e=>{
+    const b=e.target.closest('[data-bek]');
+    if(b){setTimeout(()=>onFocus(b),0)}else{hideOv();resetPanel()}
+  });
+
+  // Scroll updates overlay
+  win.addEventListener('scroll',()=>{if(sel)posOv(sel)});
+  setStatus('ready');
 }
 
-function replaceInDOM(node, find, replace) {
-  if (node.nodeType === 3) {
-    // Text node
-    if (node.textContent.includes(find)) {
-      node.textContent = node.textContent.split(find).join(replace);
-    }
-  } else if (node.nodeType === 1) {
-    // Element — replace in attributes too (href)
-    if (node.getAttribute && node.getAttribute('href') && node.getAttribute('href').includes(find)) {
-      node.setAttribute('href', node.getAttribute('href').split(find).join(replace));
-    }
-    node.childNodes.forEach(child => replaceInDOM(child, find, replace));
-  }
+function bindEl(el){
+  el.addEventListener('focus',()=>onFocus(el));
+  el.addEventListener('blur',()=>{markDirty();saveCache()});
+  el.addEventListener('input',()=>{markDirty();panelSync(el)});
+  el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation()});
 }
 
-// ── ELEMENT PANEL ──────────────────────────────────────
-function updateElementPanel(el) {
-  document.getElementById('element-tag').textContent = '<' + el.tagName.toLowerCase() + '>';
-  document.getElementById('element-text').value = el.innerText;
-  document.getElementById('element-html').value = el.innerHTML;
+// ── ELEMENT FOCUS ──────────────────────────────
+function onFocus(el){
+  sel=el; posOv(el); panelSync(el); showRp('element');
+  document.querySelectorAll('.lsitem').forEach(i=>i.classList.remove('active'));
 }
 
-function clearElementPanel() {
-  document.getElementById('element-tag').textContent = '';
-  document.getElementById('element-text').value = '';
-  document.getElementById('element-html').value = '';
+function posOv(el){
+  if(!el||!fr)return;
+  const frR=fr.getBoundingClientRect();
+  const elR=el.getBoundingClientRect();
+  const sx=win.scrollX||0, sy=win.scrollY||0;
+  ov.style.left  =(frR.left+elR.left-sx)+'px';
+  ov.style.top   =(frR.top +elR.top -sy)+'px';
+  ov.style.width =elR.width+'px';
+  ov.style.height=elR.height+'px';
+  ov.classList.add('on');
+  lb.textContent=el.tagName.toLowerCase()+(el.classList.length?' .'+el.classList[0]:'');
 }
 
-function syncFromPanel() {
-  if (!selectedEl) return;
-  const txt = document.getElementById('element-text').value;
-  selectedEl.innerText = txt;
-  isDirty = true;
-  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+function hideOv(){ov.classList.remove('on')}
+
+function panelSync(el){
+  document.getElementById('eltag').textContent='<'+el.tagName.toLowerCase()+'>'+(el.className?' .'+el.className.toString().split(' ')[0]:'');
+  document.getElementById('el-text').value=el.innerText||'';
+  document.getElementById('el-html').value=el.innerHTML||'';
+  document.getElementById('el-bg').value=el.style.background||'';
+  document.getElementById('el-css').value=el.getAttribute('style')||'';
+  document.getElementById('eledit').style.display='block';
 }
 
-function syncHTMLFromPanel() {
-  if (!selectedEl) return;
-  selectedEl.innerHTML = document.getElementById('element-html').value;
-  isDirty = true;
-  pageCache[currentFile] = '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
+function resetPanel(){
+  document.getElementById('eltag').textContent='No element selected';
+  document.getElementById('eledit').style.display='none';
 }
 
-// ── VIEWPORT ──────────────────────────────────────────
-function setViewport(mode, btn) {
-  document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const container = document.getElementById('iframe-container');
-  const frame     = document.getElementById('preview-frame');
-  if (mode === 'mobile') {
-    container.classList.add('mobile');
-  } else {
-    container.classList.remove('mobile');
-    frame.style.width  = '100%';
-    frame.style.height = '100%';
-  }
+// ── PANEL → ELEMENT SYNC ───────────────────────
+function syncText(){if(!sel)return;sel.innerText=document.getElementById('el-text').value;markDirty();saveCache()}
+function syncHTML(){if(!sel)return;sel.innerHTML=document.getElementById('el-html').value;markDirty();saveCache()}
+function applyBg(){if(!sel)return;sel.style.background=document.getElementById('el-bg').value;markDirty();saveCache()}
+function applyPad(){if(!sel)return;sel.style.padding=document.getElementById('el-pad').value;markDirty();saveCache()}
+function applyCSS(){if(!sel)return;sel.setAttribute('style',document.getElementById('el-css').value);markDirty();saveCache()}
+
+// ── ELEMENT ACTIONS ────────────────────────────
+function moveEl(dir){
+  if(!sel||!sel.parentNode)return;
+  const p=sel.parentNode;
+  dir===-1&&sel.previousElementSibling?p.insertBefore(sel,sel.previousElementSibling):
+  dir===1&&sel.nextElementSibling?p.insertBefore(sel.nextElementSibling,sel):null;
+  markDirty();saveCache();posOv(sel);toast('Moved','info');
 }
 
-// ── SCROLL TO SECTION ─────────────────────────────────
-function scrollTo(section) {
-  if (!currentDoc) return;
-  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-  event.target.classList.add('active');
+function dupEl(){
+  if(!sel||!sel.parentNode)return;
+  const c=sel.cloneNode(true);
+  c.querySelectorAll('[data-bek]').forEach(bindEl);
+  if(c.hasAttribute('data-bek'))bindEl(c);
+  sel.parentNode.insertBefore(c,sel.nextSibling);
+  markDirty();saveCache();toast('Duplicated','info');
+}
 
-  const sectionMap = {
-    hero:         ['.hero', '.hero h1'],
-    patterns:     ['.patterns-section', '.pain-section', '.phases-section'],
-    gets:         ['.gets-grid', '.section-wrap'],
-    offer:        ['.offer-section'],
-    author:       ['.author-section', '.two-col'],
-    testimonials: ['.testimonial-section'],
-    final:        ['.final-cta']
+function delEl(){
+  if(!sel)return;
+  if(!confirm('Delete this element?'))return;
+  sel.remove();sel=null;hideOv();resetPanel();markDirty();saveCache();toast('Deleted','info');
+}
+
+// ── FORMAT ────────────────────────────────────
+function ex(cmd,val){if(!doc)return;doc.execCommand(cmd,false,val||null);win.focus();markDirty();saveCache()}
+function applyColor(cmd,val){if(!doc)return;doc.execCommand(cmd,false,val);markDirty();saveCache()}
+function doLink(){const u=prompt('URL:');if(u)ex('createLink',u)}
+
+// ── INSERT BLOCK ──────────────────────────────
+function insertBlock(type){
+  if(!doc){toast('Load a page first','info');return}
+  const html=BLOCKS[type];if(!html)return;
+  const tmp=doc.createElement('div');
+  tmp.innerHTML=html;
+  const newEl=tmp.firstElementChild;
+  newEl.querySelectorAll('[data-bek]').forEach(el=>{el.setAttribute('contenteditable','true');bindEl(el)});
+  if(newEl.hasAttribute('data-bek')){newEl.setAttribute('contenteditable','true');bindEl(newEl)}
+  // Images inside block
+  newEl.querySelectorAll('img').forEach(img=>{
+    img.setAttribute('data-bek','');img.style.cursor='pointer';
+    img.addEventListener('click',e=>{e.preventDefault();onFocus(img);showRp('image')});
+  });
+  // Insert after selected element's top-level parent or append to body
+  let target=null;
+  if(sel){let e=sel;while(e&&e.parentNode!==doc.body)e=e.parentNode;if(e&&e!==doc.body)target=e}
+  target?target.parentNode.insertBefore(newEl,target.nextSibling):doc.body.appendChild(newEl);
+  newEl.scrollIntoView({behavior:'smooth'});
+  markDirty();saveCache();toast(type+' block inserted ✓','ok');
+  setTimeout(()=>onFocus(newEl),80);
+}
+
+// ── IMAGE ─────────────────────────────────────
+function handleFile(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const src=e.target.result;
+    document.getElementById('iprev').src=src;
+    document.getElementById('iprev').style.display='block';
+    if(sel&&sel.tagName==='IMG'){sel.src=src;markDirty();saveCache();toast('Image replaced ✓','ok')}
+    else document.getElementById('ins-url').value=src;
   };
-
-  const selectors = sectionMap[section] || [];
-  let found = false;
-  for (const sel of selectors) {
-    const el = currentDoc.querySelector(sel);
-    if (el) { el.scrollIntoView({behavior:'smooth'}); found = true; break; }
-  }
-  if (!found) iframe.contentWindow.scrollTo({top: 0, behavior:'smooth'});
+  r.readAsDataURL(f);
 }
 
-// ── RIGHT PANEL TABS ──────────────────────────────────
-function showRightTab(tab) {
-  ['replace','element','help'].forEach(t => {
-    document.getElementById('panel-' + t).style.display = t === tab ? 'block' : 'none';
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-  });
+function applyImgURL(){
+  const u=document.getElementById('img-url').value.trim();
+  if(!u){toast('Enter a URL','info');return}
+  if(sel&&sel.tagName==='IMG'){sel.src=u;markDirty();saveCache();toast('Image updated ✓','ok')}
+  else toast('Click an image on the page first','info');
 }
 
-// ── HTML MODAL ────────────────────────────────────────
-function openCodeModal() {
-  const html = getCurrentHTML();
-  document.getElementById('code-area').value = html;
-  document.getElementById('code-modal').classList.add('open');
+function insertImgBlock(){
+  const url=document.getElementById('ins-url').value.trim();
+  const alt=document.getElementById('ins-alt').value.trim()||'Image';
+  const sty=document.getElementById('ins-style').value;
+  const styles={full:'width:100%;display:block;',center:'max-width:780px;display:block;margin:0 auto;',circle:'width:200px;height:200px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;'};
+  const src=url||'https://placehold.co/780x440/1A1726/C9A84C?text=Your+Image';
+  if(!doc){toast('Load a page first','info');return}
+  const div=doc.createElement('div');
+  div.style.cssText='padding:24px 0;text-align:center;';
+  div.innerHTML=`<img src="${src}" alt="${alt}" style="${styles[sty]||styles.full}border-radius:4px;" data-bek><p style="font-size:12px;color:#666;margin-top:8px" contenteditable="true" data-bek>${alt}</p>`;
+  div.querySelector('img').addEventListener('click',e=>{e.preventDefault();onFocus(e.target);showRp('image')});
+  div.querySelectorAll('[contenteditable]').forEach(bindEl);
+  let target=null;
+  if(sel){let e=sel;while(e&&e.parentNode!==doc.body)e=e.parentNode;if(e&&e!==doc.body)target=e}
+  target?target.parentNode.insertBefore(div,target.nextSibling):doc.body.appendChild(div);
+  div.scrollIntoView({behavior:'smooth'});
+  markDirty();saveCache();toast('Image inserted ✓','ok');
 }
 
-function closeModal() {
-  document.getElementById('code-modal').classList.remove('open');
+// ── GLOBAL REPLACE ────────────────────────────
+function gReplace(ph,id,prefix){
+  let v=document.getElementById(id).value.trim();
+  if(!v){toast('Enter a value first','info');return}
+  if(!doc){toast('Load a page first','info');return}
+  if(prefix)v=prefix+v;
+  replNode(doc.body,ph,v);
+  cache[file]='<!DOCTYPE html>'+doc.documentElement.outerHTML;
+  markDirty();toast(`"${ph}" replaced ✓`,'ok');
 }
 
-function copyFromModal() {
-  const area = document.getElementById('code-area');
-  area.select();
-  document.execCommand('copy');
-  showToast('HTML copied to clipboard ✓', 'success');
-}
-
-// ── COPY HTML ─────────────────────────────────────────
-function copyHTML() {
-  const html = getCurrentHTML();
-  navigator.clipboard.writeText(html).then(() => {
-    showToast('HTML copied! Now paste into GitHub ✓', 'success');
-    setStatus('saved');
-    setTimeout(() => setStatus('ready'), 3000);
-  }).catch(() => {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = html;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('HTML copied! Now paste into GitHub ✓', 'success');
-  });
-}
-
-function getCurrentHTML() {
-  if (pageCache[currentFile]) return pageCache[currentFile];
-  if (currentDoc) return '<!DOCTYPE html>' + currentDoc.documentElement.outerHTML;
-  return '';
-}
-
-// ── GITHUB INSTRUCTIONS ───────────────────────────────
-function showGitHubInstructions() {
-  showRightTab('help');
-}
-
-// ── STATUS ────────────────────────────────────────────
-function setStatus(state) {
-  const dot   = document.getElementById('status-dot');
-  const label = document.getElementById('status-label');
-  dot.className = 'status-dot';
-  if (state === 'editing') {
-    dot.classList.add('editing');
-    label.textContent = 'Unsaved changes';
-  } else if (state === 'saved') {
-    dot.classList.add('saved');
-    label.textContent = 'Copied ✓';
-  } else {
-    label.textContent = 'Ready';
+function replNode(node,f,r){
+  if(node.nodeType===3){if(node.textContent.includes(f))node.textContent=node.textContent.split(f).join(r)}
+  else if(node.nodeType===1){
+    ['href','src'].forEach(a=>{const v=node.getAttribute&&node.getAttribute(a);if(v&&v.includes(f))node.setAttribute(a,v.split(f).join(r))});
+    node.childNodes.forEach(c=>replNode(c,f,r));
   }
 }
 
-// ── TOAST ─────────────────────────────────────────────
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type || '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+// ── NAVIGATION ───────────────────────────────
+const NAVMAP={hero:['.hero'],patterns:['.patterns-section','.pain-section'],phases:['.phases-section'],gets:['.gets-grid','.section-wrap'],appendix:['.appendix-section'],offer:['.offer-section'],author:['.author-section','.two-col'],testimonials:['.testimonial-section'],final:['.final-cta'],footer:['footer']};
+
+function navTo(sec,item){
+  if(!doc)return;
+  document.querySelectorAll('.lsitem').forEach(i=>i.classList.remove('active'));
+  item.classList.add('active');
+  for(const s of(NAVMAP[sec]||[])){const el=doc.querySelector(s);if(el){el.scrollIntoView({behavior:'smooth'});return}}
+  win.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── INIT ──────────────────────────────────────────────
-iframe.onload = () => initEditableFrame();
+// ── VIEWPORT ──────────────────────────────────
+function setVP(mode,btn){
+  document.querySelectorAll('.vpbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  mode==='mobile'?document.getElementById('iwrap').classList.add('mob'):document.getElementById('iwrap').classList.remove('mob');
+}
 
-// Close modal on overlay click
-document.getElementById('code-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+// ── SIDEBAR TABS ──────────────────────────────
+function lsTab(tab,el){
+  ['nav','blocks','replace'].forEach(t=>document.getElementById('ls-'+t).style.display=t===tab?'block':'none');
+  document.querySelectorAll('.lstab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
 
-// Keyboard shortcut: Escape closes modal
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-});
+// ── RIGHT PANEL TABS ──────────────────────────
+function showRp(tab){
+  ['element','image','help'].forEach(t=>{
+    document.getElementById('rp-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('rpt-'+t).classList.toggle('active',t===tab);
+  });
+}
+
+// ── HTML MODAL ────────────────────────────────
+function openModal(){document.getElementById('codeta').value=getHTML();document.getElementById('codemodal').classList.add('open')}
+function closeModal(){document.getElementById('codemodal').classList.remove('open')}
+function copyFromModal(){const ta=document.getElementById('codeta');ta.select();document.execCommand('copy');toast('Copied ✓','ok')}
+
+// ── COPY HTML ─────────────────────────────────
+function copyHTML(){
+  saveCache();
+  const html=getHTML();
+  navigator.clipboard.writeText(html).then(()=>{toast('HTML copied — paste into GitHub ✓','ok');setStatus('saved');setTimeout(()=>setStatus('ready'),3000)})
+  .catch(()=>{const ta=document.createElement('textarea');ta.value=html;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('HTML copied ✓','ok')});
+}
+
+function getHTML(){saveCache();return cache[file]||(doc?'<!DOCTYPE html>'+doc.documentElement.outerHTML:'')}
+
+// ── STATUS / DIRTY ────────────────────────────
+function markDirty(){dirty=true;setStatus('dirty')}
+function setStatus(s){
+  const d=document.getElementById('sdot'),t=document.getElementById('stxt');
+  d.className='sdot';
+  if(s==='dirty'){d.classList.add('dirty');t.textContent='Unsaved changes'}
+  else if(s==='saved'){d.classList.add('saved');t.textContent='Copied ✓'}
+  else t.textContent='Ready';
+}
+
+// ── TOAST ─────────────────────────────────────
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── INIT ──────────────────────────────────────
+fr.onload=initFrame;
+document.getElementById('codemodal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 </script>
 </body>
 </html>
