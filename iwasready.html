@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Was Ready — Bridging Earth & Kanaria</title>
+<meta name="description" content="You came here knowing something. The world kept trying to make you forget it. A transmission for starseeds, soul architects, and New Earth builders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo:  #0B0D1F;
+    --indigo2: #10122A;
+    --indigo3: #161934;
+    --violet:  #2A1F4A;
+    --gold:    #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim:   #8A6A20;
+    --star:    #E8E4F8;
+    --star-dim:#A89EC8;
+    --gray:    #665E80;
+    --white:   #fff;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--indigo);
+    color: var(--star);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── STARS CANVAS ─────────────────────────── */
+  #stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .above-stars { position: relative; z-index: 1; }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 100% 70% at 50% 0%,  rgba(42,31,74,0.9) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 20% 100%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 50% at 80% 50%,  rgba(11,13,31,0.6) 0%, transparent 60%);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--star);
+    max-width: 860px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.4s forwards;
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero h1 .line2 {
+    display: block;
+    font-weight: 600;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--star-dim);
+    max-width: 600px;
+    line-height: 1.75;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+
+  /* ── VSL ──────────────────────────────────── */
+  .vsl-wrap {
+    width: 100%;
+    max-width: 780px;
+    aspect-ratio: 16/9;
+    background: rgba(22,25,52,0.8);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    margin-bottom: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.8s forwards;
+    backdrop-filter: blur(4px);
+  }
+
+  .vsl-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--gray);
+  }
+
+  .vsl-placeholder svg { width: 56px; height: 56px; opacity: 0.35; }
+  .vsl-placeholder p { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── CTA ──────────────────────────────────── */
+  .cta-primary {
+    display: inline-block;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 20px 52px;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+
+  .cta-primary:hover {
+    color: var(--indigo);
+    box-shadow: 0 0 40px rgba(201,168,76,0.25);
+  }
+
+  .cta-primary:hover::before { transform: scaleX(1); }
+
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1s forwards;
+  }
+
+  .cta-meta {
+    font-size: 13px;
+    color: var(--star-dim);
+  }
+
+  .cta-meta strong { color: var(--gold); }
+
+  /* ── URGENCY ──────────────────────────────── */
+  .urgency-bar {
+    background: rgba(42,31,74,0.5);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 20px 36px;
+    text-align: center;
+    max-width: 640px;
+    margin: 36px auto 0;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1.2s forwards;
+  }
+
+  .urgency-bar p { font-size: 15px; color: var(--star); line-height: 1.7; }
+  .urgency-bar strong { color: var(--gold-light); }
+
+  /* ── SECTIONS ─────────────────────────────── */
+  .section-wrap {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-full {
+    padding: 100px 24px;
+  }
+
+  .section-full-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--star);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  h2 strong { font-weight: 600; }
+  h2 em { font-style: italic; color: var(--gold); }
+
+  .body-copy {
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--star-dim);
+    max-width: 680px;
+  }
+
+  .body-copy p { margin-bottom: 20px; }
+
+  /* ── RECOGNITION SECTION ──────────────────── */
+  .recognition-bg {
+    background: linear-gradient(180deg, var(--indigo) 0%, var(--indigo2) 50%, var(--indigo) 100%);
+  }
+
+  .recognition-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .recognition-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+
+  .recognition-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .recog-line {
+    padding-left: 24px;
+    border-left: 2px solid rgba(201,168,76,0.2);
+    transition: border-color 0.3s ease;
+  }
+
+  .recog-line:hover { border-left-color: var(--gold); }
+
+  .recog-line p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--star-dim);
+    line-height: 1.6;
+  }
+
+  /* ── PHASES ───────────────────────────────── */
+  .phases-section {
+    background: var(--indigo2);
+    padding: 100px 24px;
+  }
+
+  .phases-inner { max-width: 1100px; margin: 0 auto; }
+
+  .phases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px;
+    margin-top: 56px;
+  }
+
+  .phase-card {
+    background: var(--indigo3);
+    padding: 44px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .phase-card:hover::before { opacity: 1; }
+  .phase-card:hover { background: rgba(42,31,74,0.6); }
+
+  .phase-roman {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: rgba(201,168,76,0.12);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .phase-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .phase-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--star);
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .phase-desc {
+    font-size: 14px;
+    color: var(--star-dim);
+    line-height: 1.7;
+  }
+
+  .phase-chapters {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── WHAT YOU GET ─────────────────────────── */
+  .gets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .get-card {
+    border: 1px solid rgba(201,168,76,0.1);
+    padding: 36px 28px;
+    border-radius: 2px;
+    transition: all 0.35s ease;
+    background: rgba(22,25,52,0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .get-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    background: rgba(42,31,74,0.3);
+    transform: translateY(-4px);
+  }
+
+  .get-icon { font-size: 1.8rem; margin-bottom: 18px; display: block; }
+
+  .get-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--star);
+    margin-bottom: 10px;
+  }
+
+  .get-desc { font-size: 14px; color: var(--star-dim); line-height: 1.7; }
+
+  /* ── OFFER STACK ──────────────────────────── */
+  .offer-section {
+    background: rgba(42,31,74,0.2);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    padding: 100px 24px;
+  }
+
+  .offer-inner { max-width: 760px; margin: 0 auto; }
+
+  .offer-list {
+    list-style: none;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .offer-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 16px;
+    color: var(--star);
+    line-height: 1.65;
+  }
+
+  .offer-list li::before {
+    content: '✦';
+    color: var(--gold);
+    font-size: 10px;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ── AUTHOR ───────────────────────────────── */
+  .author-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .author-section { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .author-img-wrap {
+    aspect-ratio: 4/5;
+    background: var(--indigo2);
+    border: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .author-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+
+  /* ── TESTIMONIALS ─────────────────────────── */
+  .testimonial-section {
+    background: var(--indigo2);
+    padding: 100px 24px;
+  }
+
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .testimonial-card {
+    background: var(--indigo3);
+    padding: 40px 32px;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.15;
+    position: absolute;
+    top: 12px; left: 24px;
+    line-height: 1;
+  }
+
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--star);
+    line-height: 1.75;
+    margin-bottom: 24px;
+    padding-top: 20px;
+  }
+
+  .testimonial-name {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .testimonial-role { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+  /* ── FINAL CTA ────────────────────────────── */
+  .final-cta {
+    text-align: center;
+    padding: 120px 24px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 100% 80% at 50% 100%, rgba(42,31,74,0.5) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 50%);
+  }
+
+  .final-cta h2 { max-width: 700px; margin: 0 auto 24px; }
+  .final-cta .body-copy { margin: 0 auto 56px; text-align: center; }
+
+  /* ── FOOTER ───────────────────────────────── */
+  footer {
+    padding: 40px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  footer p { font-size: 13px; color: var(--gray); line-height: 1.8; }
+
+  /* ── GOLD DIVIDER ─────────────────────────── */
+  .gold-rule {
+    width: 40px; height: 1px;
+    background: var(--gold);
+    margin: 0 auto 48px;
+    opacity: 0.4;
+  }
+
+  /* ── ANIMATIONS ───────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-48 { margin-top: 48px; }
+
+  @media (max-width: 600px) {
+    .cta-primary { padding: 18px 32px; font-size: 12px; }
+    .urgency-bar { padding: 16px 18px; }
+    .phases-grid { grid-template-columns: 1fr; }
+    .gets-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars" class="above-stars"></canvas>
+
+<div class="above-stars">
+
+<!-- ═══════════════════════════════════════════ HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Founding Portal Access &nbsp;·&nbsp; Pre-Release Transmission</p>
+
+  <h1>You came here<br><em>knowing something.</em><br><span class="line2">The world kept trying<br>to make you forget it.</span></h1>
+
+  <p class="hero-sub">33 chapters that don't explain what you are. They help you remember. A living transmission — navigable, audio, and delivered before the official release.</p>
+
+  <div class="vsl-wrap">
+    <div class="vsl-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
+      <p>Embed your Starseed VSL here</p>
+    </div>
+  </div>
+
+  <div class="cta-stack">
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary">✦ &nbsp;I'm Ready — Get Portal Access</a>
+    <p class="cta-meta">Pay what you want &nbsp;·&nbsp; Starting at <strong>$17</strong> &nbsp;·&nbsp; Suggested <strong>$27</strong></p>
+  </div>
+
+  <div class="urgency-bar">
+    <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ RECOGNITION -->
+<div class="recognition-bg">
+  <div class="recognition-grid">
+    <div class="reveal">
+      <p class="section-eyebrow">You already know this</p>
+      <h2>You've been carrying something<br>that doesn't have <em>a name yet.</em></h2>
+      <div class="body-copy">
+        <p>You've done the healing work. The inner work. You've tried the spiritual communities and found their ceilings.</p>
+        <p>You've left careers, relationships, and belief systems that felt like borrowed clothes.</p>
+        <p>And still — something unresolved. Not a wound. A mission. Something you sense you came here to do that keeps outgrowing every container you put it in.</p>
+        <p>You are not behind. You are not broken. <strong style="color:var(--star)">You are early.</strong></p>
+      </div>
+    </div>
+    <div class="recognition-lines reveal">
+      <div class="recog-line">
+        <p>"I've always felt slightly out of frequency with the systems everyone else accepts."</p>
+      </div>
+      <div class="recog-line">
+        <p>"I sense my work is part of something larger than activism or entrepreneurship — but I can't name it yet."</p>
+      </div>
+      <div class="recog-line">
+        <p>"I want awakening with architecture. Insight that leads somewhere I can actually build."</p>
+      </div>
+      <div class="recog-line">
+        <p>"I need language for the mission I've been carrying without words for it."</p>
+      </div>
+      <div class="recog-line">
+        <p>"The world I'm sensing doesn't fully exist yet. I think I'm one of the people building it."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WHAT THIS IS -->
+<section class="section-wrap reveal">
+  <p class="section-eyebrow">What this transmission is</p>
+  <h2>Not a book about what's wrong.<br>A blueprint for <em>what comes next.</em></h2>
+  <div class="body-copy">
+    <p>Bridging Earth and Kanaria maps the galactic ethics, AI codes, and harmonic architecture that Earth's builders need now. Not as philosophy. As operating system.</p>
+    <p>It gives you language for the mission you've been sensing without words. Architecture for the communities and organizations you're trying to build. Cosmological context for why this specific moment on Earth is unlike any that came before it.</p>
+    <p>And a navigation system that routes you directly to the chapters that speak to the exact dimension of your work and your awakening right now.</p>
+    <p>The portal delivers this as audio, as text, and as a read-along experience you can move through at whatever pace your nervous system needs.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PHASES -->
+<div class="phases-section">
+  <div class="phases-inner">
+    <div class="reveal text-center">
+      <p class="section-eyebrow">The Four Phases</p>
+      <h2>Four phases. One spiral. 33 chapters.</h2>
+    </div>
+    <div class="phases-grid">
+      <div class="phase-card reveal">
+        <div class="phase-roman">I</div>
+        <div class="phase-label">Phase One</div>
+        <div class="phase-title">Remembering:<br>The Call to Origins</div>
+        <p class="phase-desc">Who you are, where you came from, why you are here in this specific body at this specific moment. The cosmological context before the architecture.</p>
+        <p class="phase-chapters">Chapters 1–6</p>
+      </div>
+      <div class="phase-card reveal">
+        <div class="phase-roman">II</div>
+        <div class="phase-label">Phase Two</div>
+        <div class="phase-title">Rebuilding:<br>Designing From the Fragments</div>
+        <p class="phase-desc">The structural frameworks. Governance, technology, harmonic architecture, and the blueprint for organizations that don't collapse.</p>
+        <p class="phase-chapters">Chapters 7–14</p>
+      </div>
+      <div class="phase-card reveal">
+        <div class="phase-roman">III</div>
+        <div class="phase-label">Phase Three</div>
+        <div class="phase-title">Reharmonizing:<br>Bridging Galactic & Earth Frequencies</div>
+        <p class="phase-desc">The integration layer. How galactic ethics translate into daily practice, decision-making, and the governance of real projects with real humans.</p>
+        <p class="phase-chapters">Chapters 15–22</p>
+      </div>
+      <div class="phase-card reveal">
+        <div class="phase-roman">IV</div>
+        <div class="phase-label">Phase Four</div>
+        <div class="phase-title">Rebirthing:<br>Living Templates for a New Civilization</div>
+        <p class="phase-desc">The activation. Mission, kinship, planetary citizenship, and the closing transmission from Kanaria directly to the architects reading this.</p>
+        <p class="phase-chapters">Chapters 23–33</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WHAT YOU GET -->
+<section class="section-wrap">
+  <div class="reveal">
+    <p class="section-eyebrow">What's Inside</p>
+    <h2>What the Founding Portal gives you</h2>
+  </div>
+  <div class="gets-grid">
+    <div class="get-card reveal">
+      <span class="get-icon">🌀</span>
+      <div class="get-title">The Portal</div>
+      <p class="get-desc">33 chapters in a structured workspace. Navigate by phase, by collapse pattern, or by the dimension of your awakening that needs support right now. Audio player per chapter.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🎧</span>
+      <div class="get-title">Private Podcast Feed</div>
+      <p class="get-desc">Your personal RSS link. Every chapter delivered to Apple Podcasts, Spotify, or any app. Listen the way you live — walking, lying down, eyes closed.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🗺</span>
+      <div class="get-title">Three-Axis Navigation Guide</div>
+      <p class="get-desc">All 33 chapters mapped against the 7 Collapse Patterns, Six Pillars of Holistic Wellness, and the CCOS 7 Sectors. Find your entry point in under two minutes.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">📖</span>
+      <div class="get-title">Read-Along Experience</div>
+      <p class="get-desc">Listen to the full chapter audio then drop into any part for deeper reading. Or go part by part — listen, pause, read, integrate. Both modes are built in.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🔄</span>
+      <div class="get-title">Weekly Chapter Drops</div>
+      <p class="get-desc">New chapters delivered weekly until the transmission is complete. You're inside the build. This is the pre-release, not the packaging.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">✦</span>
+      <div class="get-title">Permanent Founding Access</div>
+      <p class="get-desc">The price increases when the official launch begins. Founding Portal members keep their access permanently regardless of future price changes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ OFFER STACK -->
+<div class="offer-section">
+  <div class="offer-inner reveal">
+    <div class="text-center">
+      <p class="section-eyebrow">Everything Included</p>
+      <h2>Founding Portal Access</h2>
+    </div>
+    <ul class="offer-list">
+      <li>Full 33-chapter Hybrid Audiobook Portal — audio + read-along text</li>
+      <li>Private Podcast RSS Feed — works in Apple Podcasts, Spotify, any app</li>
+      <li>Three-Axis Navigation Guide PDF — downloadable reference map</li>
+      <li>Appendix X: Regenerative Money That Actually Works</li>
+      <li>Appendix Y: The Scale Trap Playbook</li>
+      <li>Weekly new chapter drops until the transmission is complete</li>
+      <li>Permanent access — price never increases for Founding members</li>
+    </ul>
+    <div class="text-center mt-48">
+      <a href="YOUR_GUMROAD_LINK" class="cta-primary">✦ &nbsp;I'm Ready — Get Founding Portal Access</a>
+      <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ AUTHOR -->
+<div class="author-section">
+  <div class="author-img-wrap reveal">
+    <div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:8px">REPLACE WITH PHOTO</p>
+      <p style="font-size:11px;color:var(--gold-dim)">Omja Brhad · Rick Broider on Earth</p>
+    </div>
+  </div>
+  <div class="reveal">
+    <p class="section-eyebrow">A transmission that arrived through lived experience</p>
+    <h2>The mythology is not decoration.<br>It is the <em>foundation.</em></h2>
+    <div class="body-copy">
+      <p>I'm Omja Brhad. Rick Broider on Earth.</p>
+      <p>This book arrived through years of building, breaking, and rebuilding — communities, systems, governance structures, and my own understanding of why visionary projects keep collapsing and what galactic-level ethics actually looks like applied to human organizations.</p>
+      <p>The starseed cosmology in these pages is not metaphor. It is the framework that makes the structural architecture coherent. You cannot build what comes next without understanding why this moment is the specific convergence it is.</p>
+      <p>The portal is the pre-release. You are getting it before the packaging because the people who need it most cannot wait for the finished product.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TESTIMONIALS -->
+<div class="testimonial-section">
+  <div class="testimonials-inner">
+    <div class="reveal text-center">
+      <p class="section-eyebrow">What Readers Are Experiencing</p>
+      <h2>Replace with real testimonials<br>as they arrive</h2>
+      <p class="body-copy" style="margin:0 auto">Prioritize identity-resonance responses — "finally language for what I've been carrying" — over structural/practical quotes. Those belong on the Builder page.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">I didn't know I needed permission to take my mission seriously until I listened to Phase I. Something landed that I've been circling for years.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">New Earth builder · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">I've been told my whole life that the galactic context I sense isn't real. This transmission gave me architecture for what I know to be true.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Soul architect · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">The Navigation Guide alone changed how I understand my work. I finally see which chapter speaks to where I actually am — not where I think I should be.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Starseed practitioner · [Location]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FINAL CTA -->
+<div class="final-cta">
+  <div class="reveal">
+    <p class="section-eyebrow">The transmission is already inside you</p>
+    <h2>This portal just gives it<br>a structure to <em>move through.</em></h2>
+    <p class="body-copy" style="margin:0 auto 56px;text-align:center">You have been sensing this for years.<br>The language is here now. The architecture is here now.<br>The people building the same thing are finding each other right now.</p>
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary" style="display:inline-block">✦ &nbsp;I'm Ready — Get Founding Portal Access</a>
+    <p class="cta-meta mt-16">Pay what you want &nbsp;·&nbsp; Starting at $17 &nbsp;·&nbsp; Suggested $27</p>
+    <div class="urgency-bar" style="margin-top:36px">
+      <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer>
+  <p>Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Omja Brhad &nbsp;·&nbsp; Rick Broider on Earth<br>
+  <a href="mailto:YOUR@EMAIL.com" style="color:var(--gold);text-decoration:none">YOUR@EMAIL.com</a> &nbsp;·&nbsp;
+  <a href="https://IWasReady.com" style="color:var(--gray);text-decoration:none">IWasReady.com</a></p>
+</footer>
+
+</div><!-- /above-stars -->
+
+<script>
+// Starfield
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      o: Math.random() * 0.6 + 0.1,
+      speed: Math.random() * 0.015 + 0.005,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    const pulse = s.o * (0.6 + 0.4 * Math.sin(t * s.speed + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232,228,248,${pulse})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+
+resize();
+initStars();
+requestAnimationFrame(drawStars);
+window.addEventListener('resize', () => { resize(); initStars(); });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>

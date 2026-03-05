@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebuild — Bridging Earth & Kanaria</title>
+<meta name="description" content="You built a business that was supposed to change things. The model isn't working and you know it. Seven structural patterns. Named, mapped, and solvable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:   #0A110D;
+    --forest2:  #0E1610;
+    --forest3:  #131D15;
+    --moss:     #1A2B1C;
+    --gold:     #C9A84C;
+    --gold-light:#E8C96A;
+    --gold-dim: #8A6A20;
+    --sage:     #8FAE8B;
+    --sage-dim: #5A7356;
+    --cream:    #EEE8DC;
+    --cream-dim:#9E9888;
+    --gray:     #667066;
+    --white:    #fff;
+    --red:      #C0392B;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--forest);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 100% 60% at 50% 0%, rgba(26,43,28,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 0% 100%, rgba(201,168,76,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 60% at 100% 50%, rgba(10,17,13,0.7) 0%, transparent 55%),
+      var(--forest);
+  }
+
+  /* organic texture overlay */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--cream);
+    max-width: 920px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--gold); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--cream-dim);
+    max-width: 620px;
+    line-height: 1.75;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  /* ── VSL ──────────────────────────────────── */
+  .vsl-wrap {
+    width: 100%;
+    max-width: 780px;
+    aspect-ratio: 16/9;
+    background: var(--forest2);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 3px;
+    margin-bottom: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  .vsl-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--gray);
+  }
+
+  .vsl-placeholder svg { width: 56px; height: 56px; opacity: 0.35; }
+  .vsl-placeholder p { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── CTA ──────────────────────────────────── */
+  .cta-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    color: var(--forest);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 20px 52px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.25);
+  }
+
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+
+  .cta-meta { font-size: 13px; color: var(--cream-dim); }
+  .cta-meta strong { color: var(--gold); }
+
+  /* ── URGENCY ──────────────────────────────── */
+  .urgency-bar {
+    background: rgba(26,43,28,0.6);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 3px;
+    padding: 20px 36px;
+    text-align: center;
+    max-width: 660px;
+    margin: 36px auto 0;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.2s forwards;
+  }
+
+  .urgency-bar p { font-size: 15px; color: var(--cream); line-height: 1.7; }
+  .urgency-bar strong { color: #E74C3C; }
+
+  /* ── SECTIONS ─────────────────────────────── */
+  .section-wrap {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--cream);
+    margin-bottom: 32px;
+  }
+
+  h2 em { font-style: italic; color: var(--gold); }
+
+  .body-copy {
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--cream-dim);
+    max-width: 680px;
+  }
+
+  .body-copy p { margin-bottom: 20px; }
+
+  /* ── PAIN POINTS ──────────────────────────── */
+  .pain-section {
+    background: var(--forest2);
+    padding: 100px 24px;
+  }
+
+  .pain-inner { max-width: 1100px; margin: 0 auto; }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+    margin-top: 56px;
+  }
+
+  .pain-card {
+    background: var(--forest3);
+    padding: 40px 32px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .pain-card:hover {
+    background: rgba(26,43,28,0.8);
+    border-bottom-color: var(--gold);
+  }
+
+  .pain-icon {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .pain-name {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 12px;
+  }
+
+  .pain-feel {
+    font-size: 15px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .pain-chapters {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--gold-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── WHAT YOU GET ─────────────────────────── */
+  .gets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .get-card {
+    background: var(--forest2);
+    border: 1px solid rgba(143,174,139,0.12);
+    padding: 36px 28px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .get-card:hover {
+    border-color: rgba(201,168,76,0.25);
+    transform: translateY(-4px);
+  }
+
+  .get-card.highlight {
+    border-color: rgba(201,168,76,0.2);
+    background: rgba(26,43,28,0.5);
+  }
+
+  .get-icon { font-size: 1.8rem; margin-bottom: 18px; display: block; }
+
+  .get-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+
+  .get-desc { font-size: 14px; color: var(--cream-dim); line-height: 1.7; }
+
+  /* ── APPENDICES HIGHLIGHT ─────────────────── */
+  .appendix-section {
+    background: var(--moss);
+    border-top: 1px solid rgba(143,174,139,0.1);
+    border-bottom: 1px solid rgba(143,174,139,0.1);
+    padding: 80px 24px;
+  }
+
+  .appendix-inner { max-width: 900px; margin: 0 auto; }
+
+  .appendix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  @media (max-width: 600px) { .appendix-grid { grid-template-columns: 1fr; } }
+
+  .appendix-card {
+    background: var(--forest3);
+    padding: 40px 32px;
+    border-left: 3px solid var(--gold);
+    position: relative;
+  }
+
+  .app-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .app-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .app-desc { font-size: 14px; color: var(--cream-dim); line-height: 1.7; }
+
+  /* ── OFFER STACK ──────────────────────────── */
+  .offer-section {
+    padding: 100px 24px;
+    background: linear-gradient(180deg, var(--forest) 0%, var(--forest2) 50%, var(--forest) 100%);
+  }
+
+  .offer-inner { max-width: 780px; margin: 0 auto; }
+
+  .offer-list {
+    list-style: none;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .offer-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 16px;
+    color: var(--cream);
+    line-height: 1.65;
+  }
+
+  .offer-list li::before {
+    content: '✓';
+    color: var(--sage);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  /* ── 2-COL LAYOUT ─────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; gap: 40px; } }
+
+  .author-img-wrap {
+    aspect-ratio: 4/5;
+    background: var(--forest2);
+    border: 1px solid rgba(143,174,139,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+  }
+
+  /* ── TESTIMONIALS ─────────────────────────── */
+  .testimonial-section {
+    background: var(--forest2);
+    padding: 100px 24px;
+  }
+
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .testimonial-card {
+    background: var(--forest3);
+    padding: 40px 32px;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.12;
+    position: absolute;
+    top: 12px; left: 24px;
+    line-height: 1;
+  }
+
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.75;
+    margin-bottom: 24px;
+    padding-top: 20px;
+  }
+
+  .testimonial-name { font-size: 13px; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; }
+  .testimonial-role { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+  /* ── FINAL CTA ────────────────────────────── */
+  .final-cta {
+    text-align: center;
+    padding: 120px 24px;
+    background:
+      radial-gradient(ellipse 100% 70% at 50% 100%, rgba(26,43,28,0.6) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 50%);
+  }
+
+  .final-cta h2 { max-width: 700px; margin: 0 auto 24px; }
+  .final-cta .body-copy { margin: 0 auto 56px; text-align: center; }
+
+  /* ── FOOTER ───────────────────────────────── */
+  footer {
+    padding: 40px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  footer p { font-size: 13px; color: var(--gray); line-height: 1.8; }
+
+  /* ── ANIMATIONS ───────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-48 { margin-top: 48px; }
+
+  @media (max-width: 600px) {
+    .cta-primary { padding: 18px 32px; font-size: 12px; }
+    .urgency-bar { padding: 16px 18px; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .gets-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Founding Portal Access &nbsp;·&nbsp; Regenerative Business + Organizations</p>
+
+  <h1>You built a business<br>that was supposed to<br><em>change things.</em><br>Something in the model isn't working.</h1>
+
+  <p class="hero-sub">The problem is not your mission. It is not your market. It is the structural patterns that collapse regenerative businesses before they reach the scale they were built for.</p>
+
+  <div class="vsl-wrap">
+    <div class="vsl-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
+      <p>Embed your Regen Business VSL here</p>
+    </div>
+  </div>
+
+  <div class="cta-stack">
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Yes — Get Founding Portal Access</a>
+    <p class="cta-meta">Pay what you want &nbsp;·&nbsp; Starting at <strong>$17</strong> &nbsp;·&nbsp; Suggested <strong>$27</strong></p>
+  </div>
+
+  <div class="urgency-bar">
+    <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PAIN POINTS -->
+<div class="pain-section">
+  <div class="pain-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">The 7 Patterns That End Regenerative Businesses</p>
+      <h2>These are structural failure modes.<br>Not execution problems. <em>Not you.</em></h2>
+      <p class="body-copy">Most conscious business frameworks tell you what to build toward. Almost none tell you what will end you before you get there. These patterns show up in every regenerative business that didn't make it — not because the mission was wrong, but because nobody gave the founder the architecture.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <span class="pain-icon">⚡</span>
+        <div class="pain-name">Founding Team Conflict</div>
+        <p class="pain-feel">The same tension resurfacing in different conversations. Trust eroding in ways nobody named until it became structural — and by then, irreparable.</p>
+        <p class="pain-chapters">Chapters 18, 22, 25, 28, 31</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">🔀</span>
+        <div class="pain-name">Mission Drift</div>
+        <p class="pain-feel">Everyone committed to the business but operating from different internal pictures of what it's actually for. Decisions that should be obvious generating surprising disagreement.</p>
+        <p class="pain-chapters">Chapters 1, 6, 11, 19, 23, 27, 33</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">👤</span>
+        <div class="pain-name">Governance Shadows</div>
+        <p class="pain-feel">The founder making decisions that should belong to the team. Or a team member accumulating informal authority nobody officially granted. Accountability with no address.</p>
+        <p class="pain-chapters">Chapters 4, 8, 12, 15, 21, 22, 25</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">💸</span>
+        <div class="pain-name">Financial Fragility</div>
+        <p class="pain-feel">Revenue inconsistency that never quite resolves. The founder carrying financial weight in silence. A model that works philosophically but not on a Tuesday in March when payroll is due.</p>
+        <p class="pain-chapters">Chapters 12, 25 + Appendix X</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">🔥</span>
+        <div class="pain-name">Founder & Team Burnout</div>
+        <p class="pain-feel">The people most committed to the mission, depleted first. Outputs maintained. Aliveness gone. The business is technically alive but the founder has already left — just hasn't announced it yet.</p>
+        <p class="pain-chapters">Chapters 5, 10, 13, 20, 32</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">❌</span>
+        <div class="pain-name">Wrong-Fit People</div>
+        <p class="pain-feel">A hire that looked aligned and wasn't. No architecture for what this organization is not for. Misalignment accumulating with no structural container to address it before it becomes a crisis.</p>
+        <p class="pain-chapters">Chapters 12, 18, 25</p>
+      </div>
+      <div class="pain-card reveal">
+        <span class="pain-icon">📈</span>
+        <div class="pain-name">The Scale Trap</div>
+        <p class="pain-feel">Something working at 5 people breaking at 15. Or staying intentionally small and suffocating under the weight of what can't be delegated. The 8 → 25 → 60 thresholds that nobody designed for.</p>
+        <p class="pain-chapters">Chapters 7, 12, 25, 26 + Appendix Y</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-48 reveal">
+      <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Get the Architecture — Founding Portal Access</a>
+      <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ APPENDICES HIGHLIGHT -->
+<div class="appendix-section">
+  <div class="appendix-inner reveal">
+    <div class="text-center">
+      <p class="section-eyebrow">Exclusive to Founding Portal Members</p>
+      <h2>Two appendices written specifically<br>for builders like you</h2>
+      <p class="body-copy" style="margin:0 auto 0">These were written to fill the two most critical gaps — the places where the main transmission addresses the philosophy but not the mechanics. Founding members get both.</p>
+    </div>
+    <div class="appendix-grid">
+      <div class="appendix-card">
+        <div class="app-label">Appendix X</div>
+        <div class="app-title">Regenerative Money That Actually Works</div>
+        <p class="app-desc">Five practical financial models for businesses and communities. Contribution tier systems, regenerative treasury design, the four-layer revenue stack, the contribution ledger, and the exit protocol that prevents financial shock from member or team departure.</p>
+      </div>
+      <div class="appendix-card">
+        <div class="app-label">Appendix Y</div>
+        <div class="app-title">The Scale Trap Playbook</div>
+        <p class="app-desc">What to do when your project hits 8, 25, and 60 people. The three thresholds that break most regenerative businesses — the Trust Horizon, the Coherence Fracture, and the Civilization Threshold — and the specific architectural upgrade each one requires.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WHAT YOU GET -->
+<section class="section-wrap">
+  <div class="reveal">
+    <p class="section-eyebrow">What's Inside</p>
+    <h2>What the Founding Portal gives you</h2>
+  </div>
+  <div class="gets-grid">
+    <div class="get-card reveal">
+      <span class="get-icon">🌀</span>
+      <div class="get-title">The Portal</div>
+      <p class="get-desc">33 chapters in a structured workspace. Navigate by collapse pattern, by organizational sector, or by the dimension of your business under the most pressure right now.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🎧</span>
+      <div class="get-title">Private Podcast Feed</div>
+      <p class="get-desc">Every chapter delivered to Apple Podcasts, Spotify, or any app. Listen between meetings, on the drive, while you think. Private — only you can access it.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🗺</span>
+      <div class="get-title">Three-Axis Navigation Guide</div>
+      <p class="get-desc">All 33 chapters mapped to the 7 Collapse Patterns, Six Pillars, and CCOS 7 Sectors. Find the exact chapter for your specific fire in under two minutes.</p>
+    </div>
+    <div class="get-card highlight reveal">
+      <span class="get-icon">📎</span>
+      <div class="get-title">Appendix X: Regenerative Money</div>
+      <p class="get-desc">Five financial models built for businesses and communities that conventional finance frameworks were never designed for. Practical. Applicable by Tuesday.</p>
+    </div>
+    <div class="get-card highlight reveal">
+      <span class="get-icon">📎</span>
+      <div class="get-title">Appendix Y: Scale Trap Playbook</div>
+      <p class="get-desc">The three growth thresholds that break most regenerative businesses — and the architectural upgrade each one requires. Built for organizations of 5 to 80 people.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🔄</span>
+      <div class="get-title">Weekly Chapter Drops</div>
+      <p class="get-desc">New content delivered weekly until the full transmission is complete. You're inside the build, not the marketing. That's the point of founding access.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ OFFER STACK -->
+<div class="offer-section">
+  <div class="offer-inner reveal">
+    <div class="text-center">
+      <p class="section-eyebrow">Everything Included</p>
+      <h2>Founding Portal Access</h2>
+    </div>
+    <ul class="offer-list">
+      <li>Full 33-chapter Hybrid Audiobook Portal — audio + read-along text</li>
+      <li>Private Podcast RSS Feed — works in Apple Podcasts, Spotify, any app</li>
+      <li>Three-Axis Navigation Guide PDF — downloadable reference map</li>
+      <li>Appendix X: Regenerative Money That Actually Works</li>
+      <li>Appendix Y: The Scale Trap Playbook — the 8, 25, and 60 thresholds</li>
+      <li>Weekly new chapter drops until the transmission is complete</li>
+      <li>Permanent access — price never increases for Founding members</li>
+    </ul>
+    <div class="text-center mt-48">
+      <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Get Founding Portal Access — Pay What You Want</a>
+      <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ AUTHOR -->
+<div class="two-col">
+  <div class="author-img-wrap reveal">
+    <div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:8px">REPLACE WITH PHOTO</p>
+      <p style="font-size:11px;color:var(--gold-dim)">Omja Brhad · Rick Broider on Earth</p>
+    </div>
+  </div>
+  <div class="reveal">
+    <p class="section-eyebrow">Built by someone who has been inside the collapse</p>
+    <h2>The patterns weren't mapped<br>from the outside.</h2>
+    <div class="body-copy">
+      <p>I'm Omja Brhad. Rick Broider on Earth.</p>
+      <p>I've spent years inside regenerative organizations and businesses — as a builder, as an advisor, and as the person who sometimes had to say what nobody wanted to hear about why something that should have worked was failing.</p>
+      <p>The seven patterns in this book are not theoretical. They are mapped from inside real projects with real stakes and real people who cared deeply and still watched things fall apart.</p>
+      <p>The portal is the pre-release. You're getting it before the official packaging because the businesses that need it most cannot wait for the finished product.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TESTIMONIALS -->
+<div class="testimonial-section">
+  <div class="testimonials-inner">
+    <div class="reveal text-center">
+      <p class="section-eyebrow">What Founders Are Experiencing</p>
+      <h2>Replace with real testimonials<br>as they arrive</h2>
+      <p class="body-copy" style="margin:0 auto">For this page, prioritize testimonials that name a specific structural problem solved — governance, financial model, scale threshold. Pain-to-relief arc is the most converting format here.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">Finally a framework for the governance conversation I've been avoiding for two years. Appendix Y named exactly what broke when we went from 8 to 22 people.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Regenerative business founder · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">I've been in Pattern 5 calling it dedication. This was the first time I understood it as a structural problem — not a personal one. That distinction changed everything.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Social enterprise CEO · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">Appendix X gave me the financial architecture conversation I could never find anywhere else. Real models for real regenerative economics — not philosophy, not greenwash.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Conscious org leader · [Location]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FINAL CTA -->
+<div class="final-cta">
+  <div class="reveal">
+    <p class="section-eyebrow">The model can work</p>
+    <h2>Your mission is real.<br>The architecture <em>just needs to match it.</em></h2>
+    <p class="body-copy" style="margin:0 auto 56px;text-align:center">The structural patterns have names.<br>The solutions are built.<br>The portal is open.</p>
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Get Founding Portal Access — Pay What You Want</a>
+    <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    <div class="urgency-bar" style="margin-top:36px">
+      <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer>
+  <p>Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Omja Brhad &nbsp;·&nbsp; Rick Broider on Earth<br>
+  <a href="mailto:YOUR@EMAIL.com" style="color:var(--gold);text-decoration:none">YOUR@EMAIL.com</a> &nbsp;·&nbsp;
+  <a href="https://StopTheCollapse.com/rebuild" style="color:var(--gray);text-decoration:none">StopTheCollapse.com/rebuild</a></p>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>

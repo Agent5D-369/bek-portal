@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop The Collapse — Bridging Earth & Kanaria</title>
+<meta name="description" content="Your community isn't failing because of bad people. It's failing because no one gave you the architecture. 33 chapters. 7 collapse patterns named and solved.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim: #8A6A20;
+    --dark: #0D0B14;
+    --dark2: #13111E;
+    --dark3: #1A1726;
+    --crimson: #8B1A1A;
+    --crimson-light: #C0392B;
+    --cream: #F5F0E8;
+    --cream-dim: #B8B0A0;
+    --gray: #888;
+    --white: #fff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ───────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139,26,26,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 80% 100%, rgba(201,168,76,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(60,20,80,0.4) 0%, transparent 50%),
+      var(--dark);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(201,168,76,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 60%, rgba(201,168,76,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, rgba(201,168,76,0.3) 0%, transparent 100%);
+    background-size: 400px 400px, 300px 300px, 500px 500px, 350px 350px, 250px 250px;
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--cream);
+    max-width: 900px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--cream-dim);
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  .vsl-wrap {
+    width: 100%;
+    max-width: 780px;
+    aspect-ratio: 16/9;
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  .vsl-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--gray);
+  }
+
+  .vsl-placeholder svg { width: 56px; height: 56px; opacity: 0.4; }
+
+  .vsl-placeholder p {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── CTA ─────────────────────────────────────── */
+  .cta-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 20px 48px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+
+  .cta-primary:hover::before { transform: translateX(100%); }
+  .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.3); }
+
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+
+  .cta-meta {
+    font-size: 13px;
+    color: var(--cream-dim);
+  }
+
+  .cta-meta strong { color: var(--gold); }
+
+  /* ── URGENCY ─────────────────────────────────── */
+  .urgency-bar {
+    background: linear-gradient(135deg, rgba(139,26,26,0.3) 0%, rgba(100,15,15,0.4) 100%);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 4px;
+    padding: 20px 32px;
+    text-align: center;
+    max-width: 680px;
+    margin: 32px auto 0;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.2s forwards;
+  }
+
+  .urgency-bar p {
+    font-size: 15px;
+    color: var(--cream);
+    line-height: 1.6;
+  }
+
+  .urgency-bar strong { color: #E74C3C; }
+
+  /* ── DIVIDER ─────────────────────────────────── */
+  .gold-rule {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 48px;
+    opacity: 0.5;
+  }
+
+  /* ── SECTIONS ────────────────────────────────── */
+  section {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-full {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--cream);
+    margin-bottom: 32px;
+  }
+
+  h2 em { font-style: italic; color: var(--gold); }
+
+  .body-copy {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--cream-dim);
+    max-width: 680px;
+  }
+
+  /* ── PATTERNS ────────────────────────────────── */
+  .patterns-section {
+    background: var(--dark2);
+    padding: 100px 24px;
+  }
+
+  .patterns-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .patterns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    margin-top: 56px;
+  }
+
+  .pattern-card {
+    background: var(--dark3);
+    padding: 36px 32px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .pattern-card:hover {
+    background: rgba(201,168,76,0.04);
+    border-left-color: var(--gold);
+  }
+
+  .pattern-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: rgba(201,168,76,0.15);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .pattern-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .pattern-feel {
+    font-size: 15px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .pattern-chapters {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── WHAT YOU GET ───────────────────────────── */
+  .gets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 32px;
+    margin-top: 56px;
+  }
+
+  .get-card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.1);
+    padding: 40px 32px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .get-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    transform: translateY(-4px);
+  }
+
+  .get-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .get-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+
+  .get-desc {
+    font-size: 15px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  /* ── OFFER STACK ─────────────────────────────── */
+  .offer-section {
+    background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(201,168,76,0.02) 100%);
+    border-top: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    padding: 100px 24px;
+  }
+
+  .offer-inner { max-width: 800px; margin: 0 auto; }
+
+  .offer-list {
+    list-style: none;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .offer-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 16px;
+    color: var(--cream);
+    line-height: 1.6;
+  }
+
+  .offer-list li::before {
+    content: '✓';
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  /* ── AUTHOR ──────────────────────────────────── */
+  .author-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .author-section { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .author-image-placeholder {
+    aspect-ratio: 4/5;
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .author-image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.05) 0%, transparent 70%);
+  }
+
+  /* ── TESTIMONIALS ────────────────────────────── */
+  .testimonial-section {
+    background: var(--dark2);
+    padding: 100px 24px;
+  }
+
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 56px;
+  }
+
+  .testimonial-card {
+    background: var(--dark3);
+    padding: 40px 36px;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.2;
+    position: absolute;
+    top: 16px;
+    left: 28px;
+    line-height: 1;
+  }
+
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    padding-top: 16px;
+  }
+
+  .testimonial-name {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .testimonial-role {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  /* ── FINAL CTA ───────────────────────────────── */
+  .final-cta {
+    text-align: center;
+    padding: 120px 24px;
+    background:
+      radial-gradient(ellipse 100% 80% at 50% 100%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,26,26,0.2) 0%, transparent 50%),
+      var(--dark);
+  }
+
+  .final-cta h2 {
+    max-width: 700px;
+    margin: 0 auto 24px;
+  }
+
+  .final-cta .body-copy {
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  footer {
+    padding: 40px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  footer p {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+
+  /* ── ANIMATIONS ──────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── UTILITY ─────────────────────────────────── */
+  .text-gold { color: var(--gold); }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-48 { margin-top: 48px; }
+
+  @media (max-width: 600px) {
+    .cta-primary { padding: 18px 32px; font-size: 13px; }
+    .urgency-bar { padding: 16px 20px; }
+    .patterns-grid { grid-template-columns: 1fr; }
+    .gets-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Founding Portal Access &nbsp;·&nbsp; Pre-Release</p>
+
+  <h1>Your community isn't failing<br>because of <em>bad people.</em><br>It's failing because no one gave<br>you the architecture.</h1>
+
+  <p class="hero-sub">33 chapters. 7 collapse patterns named and solved. One portal — audio, text, and a navigation system that routes you directly to the chapter that speaks to the exact fire you're in right now.</p>
+
+  <div class="vsl-wrap">
+    <div class="vsl-placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
+      <p>Embed your VSL video here</p>
+    </div>
+  </div>
+
+  <div class="cta-stack">
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Yes — I Want Founding Portal Access</a>
+    <p class="cta-meta">Pay what you want &nbsp;·&nbsp; Starting at <strong>$17</strong> &nbsp;·&nbsp; Suggested <strong>$27</strong></p>
+  </div>
+
+  <div class="urgency-bar">
+    <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PATTERNS -->
+<div class="patterns-section">
+  <div class="patterns-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">The 7 Collapse Patterns</p>
+      <h2>You didn't fail. The pattern was already<br>running before you arrived.</h2>
+      <p class="body-copy">Every regenerative project that collapses follows one of seven structural patterns. Not bad intentions. Not wrong values. Seven patterns — named, mapped, and traceable in the wreckage of every project that didn't make it.</p>
+    </div>
+
+    <div class="patterns-grid">
+      <div class="pattern-card reveal">
+        <div class="pattern-num">01</div>
+        <div class="pattern-name">Interpersonal Conflict</div>
+        <p class="pattern-feel">The same argument in different costumes. Trust eroding until the relational field can no longer hold the weight of the mission.</p>
+        <p class="pattern-chapters">Chapters 18, 22, 25, 28, 31</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">02</div>
+        <div class="pattern-name">No Shared Vision</div>
+        <p class="pattern-feel">Everyone doing the work but pulling in different directions. The founding energy present. The shared picture gone.</p>
+        <p class="pattern-chapters">Chapters 1, 6, 11, 19, 23, 27, 33</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">03</div>
+        <div class="pattern-name">Governance Shadows</div>
+        <p class="pattern-feel">Power accumulating in a person or clique with no formal agreement. Accountability living nowhere. Frustration with no address.</p>
+        <p class="pattern-chapters">Chapters 4, 8, 12, 15, 21, 22, 25</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">04</div>
+        <div class="pattern-name">Financial Fragility</div>
+        <p class="pattern-feel">One or two people absorbing the financial weight in silence. The money conversation always stressful. Survival dependent on someone's endurance.</p>
+        <p class="pattern-chapters">Chapters 12, 25 + Appendix X</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">05</div>
+        <div class="pattern-name">Burnout</div>
+        <p class="pattern-feel">The people who care most, depleted first. Showing up without being present. Running on obligation instead of aliveness.</p>
+        <p class="pattern-chapters">Chapters 5, 10, 13, 20, 32</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">06</div>
+        <div class="pattern-name">Wrong People</div>
+        <p class="pattern-feel">Someone inside who shouldn't be. No architecture for who this is not for. Misalignment accumulating with no container to address it.</p>
+        <p class="pattern-chapters">Chapters 12, 18, 25</p>
+      </div>
+      <div class="pattern-card reveal">
+        <div class="pattern-num">07</div>
+        <div class="pattern-name">The Scale Trap</div>
+        <p class="pattern-feel">Something that worked at 8 people breaking at 25. Or a project staying deliberately small and slowly suffocating. Growth dynamics nobody designed for.</p>
+        <p class="pattern-chapters">Chapters 7, 12, 25, 26 + Appendix Y</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-48 reveal">
+      <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Find Your Pattern — Get Portal Access</a>
+      <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WHAT YOU GET -->
+<section>
+  <div class="reveal">
+    <p class="section-eyebrow">What's Inside</p>
+    <h2>What the Founding Portal<br>gives you</h2>
+  </div>
+  <div class="gets-grid">
+    <div class="get-card reveal">
+      <span class="get-icon">🌀</span>
+      <div class="get-title">The Portal</div>
+      <p class="get-desc">33 chapters in a structured workspace. Audio player per chapter. Navigate by phase, by collapse pattern, or by the sector of your organization under the most pressure right now.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🎧</span>
+      <div class="get-title">Private Podcast Feed</div>
+      <p class="get-desc">Your personal RSS link delivers every chapter to Apple Podcasts, Spotify, or any app. Listen offline, screen off, while you move. A real private podcast only you can access.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🗺</span>
+      <div class="get-title">Three-Axis Navigation Guide</div>
+      <p class="get-desc">All 33 chapters mapped against the 7 Collapse Patterns, the Six Pillars of Holistic Wellness, and the CCOS 7 Sectors of Regeneration. Find your entry point before you listen to a word.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">📎</span>
+      <div class="get-title">Appendix X: Regenerative Money</div>
+      <p class="get-desc">Five practical financial models for communities and organizations. Contribution tiers, regenerative treasuries, revenue stacks, and the exit protocol that prevents financial shock.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">📎</span>
+      <div class="get-title">Appendix Y: The Scale Trap Playbook</div>
+      <p class="get-desc">What to do when your project hits 8, 25, and 60 people. The three thresholds that break most regenerative projects — and the architecture each one requires.</p>
+    </div>
+    <div class="get-card reveal">
+      <span class="get-icon">🔄</span>
+      <div class="get-title">Weekly Chapter Drops</div>
+      <p class="get-desc">New chapters delivered weekly until the full transmission is complete. Founding members receive all updates automatically. You're inside the build, not the marketing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ OFFER STACK -->
+<div class="offer-section">
+  <div class="offer-inner reveal">
+    <p class="section-eyebrow">Everything Included</p>
+    <h2>Founding Portal Access</h2>
+    <ul class="offer-list">
+      <li>Full 33-chapter Hybrid Audiobook Portal — audio + read-along text</li>
+      <li>Private Podcast RSS Feed — works in Apple Podcasts, Spotify, any app</li>
+      <li>Three-Axis Navigation Guide PDF — downloadable reference map</li>
+      <li>Appendix X: Regenerative Money That Actually Works</li>
+      <li>Appendix Y: The Scale Trap Playbook</li>
+      <li>Weekly new chapter drops until the transmission is complete</li>
+      <li>Permanent access — price never increases for Founding members</li>
+    </ul>
+    <div class="text-center mt-48">
+      <a href="YOUR_GUMROAD_LINK" class="cta-primary">⚡ &nbsp;Get Founding Portal Access — Pay What You Want</a>
+      <p class="cta-meta mt-16">Starting at $17 &nbsp;·&nbsp; Suggested $27 &nbsp;·&nbsp; Locks at $47 on ______</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ AUTHOR -->
+<div class="author-section">
+  <div class="author-image-placeholder reveal">
+    <div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:8px">REPLACE WITH PHOTO</p>
+      <p style="font-size:11px;color:var(--gold-dim)">Omja Brhad · Rick Broider on Earth</p>
+    </div>
+  </div>
+  <div class="reveal">
+    <p class="section-eyebrow">Built by someone who watched the patterns run</p>
+    <h2>The architecture came from<br>inside the collapse</h2>
+    <p class="body-copy">I'm Omja Brhad. Rick Broider on Earth.<br><br>I've spent years inside regenerative communities, intentional projects, and conscious organizations — as a builder, as an advisor, and as the person who had to name what nobody wanted to say.<br><br>The seven collapse patterns in this book are not theoretical. They are the distilled architecture of watching real projects end — and learning, slowly, what would have stopped it.<br><br>The portal is the pre-release. You are getting it before the packaging is finished because the people who need it most cannot wait.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TESTIMONIALS -->
+<div class="testimonial-section">
+  <div class="testimonials-inner">
+    <div class="reveal text-center">
+      <p class="section-eyebrow">What Builders Are Saying</p>
+      <h2>Social proof goes here</h2>
+      <p class="body-copy" style="margin:0 auto">Replace these placeholder cards with real testimonials as they arrive. Prioritize quotes that name a specific collapse pattern or structural relief.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">Finally — language for what I've been trying to build without the words for it. I knew our governance was failing but I couldn't name why until Pattern 3.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Community founder · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">I've been in Pattern 5 for two years calling it dedication. Reading this chapter was the first time I understood I had a structural problem, not a personal failing.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">Regenerative org leader · [Location]</p>
+      </div>
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">The Scale Trap appendix alone was worth everything. We hit 25 people and something broke. Now I understand exactly why and what to build instead.</p>
+        <p class="testimonial-name">— Placeholder Name</p>
+        <p class="testimonial-role">New Earth project founder · [Location]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FINAL CTA -->
+<div class="final-cta">
+  <div class="reveal">
+    <p class="section-eyebrow">Your project does not have to end this way</p>
+    <h2>The architecture exists.<br>The map is built.<br>The portal is <em>open.</em></h2>
+    <p class="body-copy">What it asks of you is one decision.</p>
+    <a href="YOUR_GUMROAD_LINK" class="cta-primary mt-32" style="display:inline-block;margin-top:48px">⚡ &nbsp;Yes — Get Founding Portal Access Now</a>
+    <p class="cta-meta mt-16">Pay what you want &nbsp;·&nbsp; Starting at $17 &nbsp;·&nbsp; Suggested $27</p>
+    <div class="urgency-bar" style="margin-top:32px">
+      <p><strong>Pay-what-you-want closes on ______.</strong><br>After that, Founding Portal Access locks at $47.<br>If you've been sitting on it, now is the moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer>
+  <p>Bridging Earth &amp; Kanaria &nbsp;·&nbsp; Omja Brhad &nbsp;·&nbsp; Rick Broider on Earth<br>
+  <a href="mailto:YOUR@EMAIL.com" style="color:var(--gold);text-decoration:none">YOUR@EMAIL.com</a> &nbsp;·&nbsp;
+  <a href="https://StopTheCollapse.com" style="color:var(--gray);text-decoration:none">StopTheCollapse.com</a></p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>
